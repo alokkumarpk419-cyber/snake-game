@@ -2,246 +2,363 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
 <title>Snake World</title>
 
 <style>
 *{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    -webkit-tap-highlight-color:transparent;
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-tap-highlight-color:transparent;
 }
 
 body{
-    min-height:100vh;
-    background:
-        radial-gradient(circle at 10% 10%,#263b65,transparent 30%),
-        radial-gradient(circle at 90% 90%,#51254f,transparent 30%),
-        #080b12;
-    color:#fff;
-    font-family:Arial,sans-serif;
-    display:flex;
-    justify-content:center;
-    overflow-x:hidden;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 10% 10%,#183d31,transparent 35%),
+    radial-gradient(circle at 90% 90%,#192b48,transparent 35%),
+    #071018;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  overflow-x:hidden;
 }
 
 .app{
-    width:100%;
-    max-width:620px;
-    padding:15px;
-    text-align:center;
+  width:100%;
+  max-width:560px;
+  margin:auto;
+  padding:10px;
 }
 
-h1{
-    color:#ffd52b;
-    font-size:32px;
-    margin:3px 0;
+/* ================= HEADER ================= */
+
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  margin-bottom:7px;
 }
 
-.subtitle{
-    color:#aeb9cc;
-    font-size:13px;
-    margin-bottom:12px;
+.title{
+  font-size:25px;
+  font-weight:900;
+  color:#ffd52b;
+  text-shadow:2px 2px #553800;
 }
+
+.topButton{
+  width:43px;
+  height:38px;
+  border-radius:12px;
+  border:1px solid #55718d;
+  background:#142238;
+  color:white;
+  font-size:18px;
+}
+
+/* ================= STATS ================= */
 
 .stats{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:7px;
-    margin-bottom:10px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:5px;
+  margin-bottom:7px;
 }
 
 .stat{
-    background:#171f2e;
-    border:1px solid #3c4b65;
-    border-radius:11px;
-    padding:8px 12px;
-    font-size:13px;
+  background:#111c2b;
+  border:1px solid #39516c;
+  border-radius:9px;
+  padding:6px 3px;
+  text-align:center;
+  font-size:10px;
 }
 
 .stat b{
-    color:#ffd52b;
+  display:block;
+  color:#ffd52b;
+  font-size:14px;
+  margin-top:2px;
 }
 
-.toolbar{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:7px;
-    margin-bottom:12px;
+/* ================= SMALL MENU BOXES ================= */
+
+.menu{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin-bottom:8px;
 }
 
-.tool{
-    border:1px solid #52627b;
-    background:#202b3d;
-    color:#fff;
-    padding:9px 12px;
-    border-radius:10px;
-    font-weight:bold;
-    cursor:pointer;
+.menu button{
+  min-height:42px;
+  border:1px solid #42647f;
+  background:#122236;
+  color:#fff;
+  border-radius:10px;
+  font-weight:bold;
+  font-size:11px;
+  cursor:pointer;
 }
 
-.tool:active{
-    transform:scale(.95);
+.menu button:active{
+  transform:scale(.95);
+}
+
+.menu .pause{
+  color:#ffd52b;
+}
+
+/* ================= GAME ================= */
+
+.gameWrap{
+  width:100%;
+  position:relative;
 }
 
 .game{
-    position:relative;
-    width:min(92vw,500px);
-    height:min(92vw,500px);
-    margin:auto;
-    background:#138a2e;
-    border:5px solid #65ff76;
-    border-radius:20px;
-    overflow:hidden;
+  width:100%;
+  aspect-ratio:1/1;
+  background:#158b31;
+  border:4px solid #68ff78;
+  border-radius:18px;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 0 0 2px #0d5720;
 }
 
 canvas{
-    display:block;
-    width:100%;
-    height:100%;
+  width:100%;
+  height:100%;
+  display:block;
 }
+
+.pauseOverlay{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+
+.pauseOverlay.show{
+  display:flex;
+}
+
+.pauseText{
+  background:#111827;
+  border:2px solid #ffd52b;
+  padding:15px 25px;
+  border-radius:15px;
+  font-size:23px;
+  font-weight:bold;
+}
+
+/* ================= CONTROLS ================= */
 
 .controls{
-    margin:15px auto 0;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:7px;
-}
-
-.row{
-    display:flex;
-    gap:7px;
+  width:190px;
+  margin:12px auto 0;
+  display:grid;
+  grid-template-columns:55px 55px 55px;
+  grid-template-rows:55px 55px 55px;
+  gap:7px;
+  justify-content:center;
 }
 
 .control{
-    width:66px;
-    height:52px;
-    border-radius:14px;
-    background:#202a3e;
-    color:#fff;
-    border:2px solid #657796;
-    font-size:24px;
-    font-weight:bold;
-    cursor:pointer;
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  border:2px solid #6aff78;
+  background:#193d2a;
+  color:#fff;
+  font-size:25px;
+  font-weight:bold;
+  box-shadow:0 2px 0 #092016;
 }
 
 .control:active{
-    transform:scale(.94);
+  transform:scale(.91);
 }
 
-/* सिर्फ DOWN BUTTON थोड़ा नीचे */
-.control[data-dir="down"]{
-    transform:translateY(15px);
+/* ऊपर */
+.up{
+  grid-column:2;
+  grid-row:1;
 }
 
-.control[data-dir="down"]:active{
-    transform:translateY(15px) scale(.94);
+/* left / right */
+.left{
+  grid-column:1;
+  grid-row:2;
 }
+
+.right{
+  grid-column:3;
+  grid-row:2;
+}
+
+/* नीचे वाला button सबसे नीचे */
+.down{
+  grid-column:2;
+  grid-row:3;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+  text-align:center;
+  margin-top:8px;
+  color:#9fb2c7;
+  font-size:10px;
+}
+
+/* ================= MODAL ================= */
 
 .modal{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.78);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:100;
-    padding:15px;
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(0,0,0,.78);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:14px;
 }
 
 .modal.show{
-    display:flex;
+  display:flex;
 }
 
-.card{
-    width:min(94vw,470px);
-    max-height:86vh;
-    overflow:auto;
-    background:#111827;
-    border:2px solid #ffd52b;
-    border-radius:20px;
-    padding:20px;
+.modalCard{
+  width:min(94vw,430px);
+  max-height:82vh;
+  overflow:auto;
+  background:#101b2b;
+  border:2px solid #4b7597;
+  border-radius:18px;
+  padding:16px;
 }
 
-.card h2{
-    color:#ffd52b;
-    margin-bottom:15px;
+.modalHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
 }
 
-.grid{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:8px;
-}
-
-.choice{
-    min-height:60px;
-    background:#202b40;
-    color:#fff;
-    border:1px solid #52627b;
-    border-radius:11px;
-    font-size:25px;
-    cursor:pointer;
-}
-
-.choice small{
-    display:block;
-    font-size:9px;
-    margin-top:3px;
-}
-
-.choice.selected{
-    border:2px solid #ffd52b;
+.modalHeader h2{
+  color:#ffd52b;
+  font-size:21px;
 }
 
 .close{
-    margin-top:17px;
-    border:0;
-    background:#ffd52b;
-    color:#111;
-    padding:10px 22px;
-    border-radius:10px;
-    font-weight:bold;
-    cursor:pointer;
+  width:35px;
+  height:35px;
+  border:0;
+  border-radius:10px;
+  background:#26374d;
+  color:white;
+  font-size:20px;
 }
 
-.bigGift{
-    font-size:80px;
-    margin:10px;
+/* ================= CHOICES ================= */
+
+.choiceGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
 }
 
-.rewardBox{
-    background:#202b40;
-    border-radius:13px;
-    padding:15px;
-    line-height:1.7;
+.choice{
+  min-height:76px;
+  border:2px solid #405872;
+  border-radius:13px;
+  background:#17273b;
+  color:white;
+  cursor:pointer;
+  font-size:31px;
 }
 
-.shopItem{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    background:#202b40;
-    padding:12px;
-    border-radius:12px;
-    margin:8px 0;
+.choice small{
+  display:block;
+  font-size:10px;
+  margin-top:4px;
+  color:#c7d4e2;
 }
 
-.buy{
-    border:0;
-    background:#ffd52b;
-    color:#111;
-    padding:8px 12px;
-    border-radius:8px;
-    font-weight:bold;
+.choice.selected{
+  border-color:#69ff75;
+  box-shadow:0 0 0 2px rgba(105,255,117,.15);
 }
 
-.danger{
-    color:#ff5d5d;
+/* colors */
+
+.colorDot{
+  width:35px;
+  height:35px;
+  display:block;
+  border-radius:50%;
+  margin:auto;
+  border:2px solid white;
+}
+
+/* ================= GAME OVER ================= */
+
+.gameOver{
+  text-align:center;
+}
+
+.gameOver h2{
+  color:#ff6464;
+  margin-bottom:12px;
+}
+
+.playAgain{
+  margin-top:15px;
+  padding:11px 22px;
+  border:0;
+  border-radius:11px;
+  background:#ffd52b;
+  color:#111;
+  font-weight:bold;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:380px){
+
+  .title{
+    font-size:21px;
+  }
+
+  .stats{
+    gap:3px;
+  }
+
+  .stat{
+    font-size:9px;
+  }
+
+  .stat b{
+    font-size:12px;
+  }
+
+  .menu button{
+    font-size:10px;
+  }
+
+  .controls{
+    transform:scale(.92);
+    transform-origin:top center;
+  }
+
 }
 </style>
 </head>
@@ -250,324 +367,462 @@ canvas{
 
 <div class="app">
 
-<h1>🐍 SNAKE WORLD</h1>
+  <!-- HEADER -->
 
-<div class="subtitle">
-Eat • Grow • Collect • Unlock
+  <div class="header">
+
+    <button class="topButton" id="soundBtn">
+      🔊
+    </button>
+
+    <div class="title">
+      🐍 SNAKE
+    </div>
+
+    <button class="topButton" id="pauseBtn">
+      ⏸️
+    </button>
+
+  </div>
+
+
+  <!-- STATS -->
+
+  <div class="stats">
+
+    <div class="stat">
+      SCORE
+      <b id="score">0</b>
+    </div>
+
+    <div class="stat">
+      🍎 FRUIT
+      <b id="fruitCount">0</b>
+    </div>
+
+    <div class="stat">
+      🪙 COINS
+      <b id="coins">0</b>
+    </div>
+
+    <div class="stat">
+      🏆 BEST
+      <b id="best">0</b>
+    </div>
+
+  </div>
+
+
+  <!-- SMALL CLICKABLE MENU -->
+
+  <div class="menu">
+
+    <button id="fruitMenu">
+      🍎<br>FRUITS
+    </button>
+
+    <button id="colorMenu">
+      🎨<br>COLORS
+    </button>
+
+    <button id="faceMenu">
+      😀<br>EMOJI
+    </button>
+
+    <button id="giftMenu">
+      🎁<br>GIFTS
+    </button>
+
+  </div>
+
+
+  <!-- GAME -->
+
+  <div class="gameWrap">
+
+    <div class="game">
+
+      <canvas id="canvas"></canvas>
+
+      <div
+        class="pauseOverlay"
+        id="pauseOverlay">
+
+        <div class="pauseText">
+          ⏸️ PAUSED
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- CONTROLS -->
+
+  <div class="controls">
+
+    <button
+      class="control up"
+      data-dir="up">
+      ⬆️
+    </button>
+
+    <button
+      class="control left"
+      data-dir="left">
+      ⬅️
+    </button>
+
+    <button
+      class="control right"
+      data-dir="right">
+      ➡️
+    </button>
+
+    <button
+      class="control down"
+      data-dir="down">
+      ⬇️
+    </button>
+
+  </div>
+
+
+  <div class="footer">
+    🐍 Slow • Smooth • Fun &nbsp;|&nbsp;
+    🪙 Coins Saved Automatically
+  </div>
+
 </div>
 
-<div class="stats">
 
-<div class="stat">
-Score <b id="score">0</b>
-</div>
-
-<div class="stat">
-🍎 <b id="fruitCount">0</b>
-</div>
-
-<div class="stat">
-🪙 <b id="coins">0</b>
-</div>
-
-<div class="stat">
-🏆 <b id="best">0</b>
-</div>
-
-<div class="stat">
-🎁 <b id="gifts">0</b>
-</div>
-
-</div>
-
-
-<div class="toolbar">
-
-<button class="tool" id="fruitButton">
-🍎 Fruits
-</button>
-
-<button class="tool" id="faceButton">
-🎭 Face
-</button>
-
-<button class="tool" id="giftButton">
-🎁 Gifts
-</button>
-
-<button class="tool" id="soundButton">
-🔊 Sound ON
-</button>
-
-</div>
-
-
-<div class="game">
-
-<canvas id="canvas"></canvas>
-
-</div>
-
-
-<!-- CONTROLS -->
-
-<div class="controls">
-
-<div class="row">
-
-<button class="control" data-dir="up">
-⬆️
-</button>
-
-</div>
-
-<div class="row">
-
-<button class="control" data-dir="left">
-⬅️
-</button>
-
-<button class="control" data-dir="down">
-⬇️
-</button>
-
-<button class="control" data-dir="right">
-➡️
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- GAME OVER -->
-
-<div class="modal" id="gameOverModal">
-
-<div class="card">
-
-<h2>💥 GAME OVER</h2>
-
-<p>
-Score:
-<b id="finalScore">0</b>
-</p>
-
-<p>
-Fruits:
-<b id="finalFruits">0</b>
-</p>
-
-<p>
-🪙 Saved Coins:
-<b id="finalCoins">0</b>
-</p>
-
-<p class="danger">
-तुम्हारे Coins सुरक्षित हैं।
-</p>
-
-<button class="close" id="playAgain">
-🎮 PLAY AGAIN
-</button>
-
-</div>
-
-</div>
-
-
-<!-- FRUIT MENU -->
+<!-- =====================================================
+     FRUIT MODAL
+===================================================== -->
 
 <div class="modal" id="fruitModal">
 
-<div class="card">
+  <div class="modalCard">
 
-<h2>🍎 10 Fruits</h2>
+    <div class="modalHeader">
 
-<div class="grid">
+      <h2>🍎 Choose Fruit</h2>
 
-<button class="choice" data-fruit="🍎">
-🍎<small>Apple</small>
-</button>
+      <button
+        class="close"
+        data-close="fruitModal">
+        ×
+      </button>
 
-<button class="choice" data-fruit="🍊">
-🍊<small>Orange</small>
-</button>
+    </div>
 
-<button class="choice" data-fruit="🍇">
-🍇<small>Grapes</small>
-</button>
+    <div class="choiceGrid">
 
-<button class="choice" data-fruit="🍉">
-🍉<small>Watermelon</small>
-</button>
+      <button
+        class="choice"
+        data-fruit="🍎">
 
-<button class="choice" data-fruit="🍓">
-🍓<small>Strawberry</small>
-</button>
+        🍎
+        <small>Apple</small>
 
-<button class="choice" data-fruit="🍌">
-🍌<small>Banana</small>
-</button>
+      </button>
 
-<button class="choice" data-fruit="🍍">
-🍍<small>Pineapple</small>
-</button>
+      <button
+        class="choice"
+        data-fruit="🍌">
 
-<button class="choice" data-fruit="🥭">
-🥭<small>Mango</small>
-</button>
+        🍌
+        <small>Banana</small>
 
-<button class="choice" data-fruit="🍒">
-🍒<small>Cherry</small>
-</button>
+      </button>
 
-<button class="choice" data-fruit="🥝">
-🥝<small>Kiwi</small>
-</button>
+      <button
+        class="choice"
+        data-fruit="🥭">
 
-</div>
+        🥭
+        <small>Mango</small>
 
-<button class="close" data-close="fruitModal">
-बंद करें
-</button>
+      </button>
 
-</div>
+    </div>
+
+  </div>
 
 </div>
 
 
-<!-- FACE MENU -->
+<!-- =====================================================
+     COLOR MODAL
+===================================================== -->
+
+<div class="modal" id="colorModal">
+
+  <div class="modalCard">
+
+    <div class="modalHeader">
+
+      <h2>🎨 Snake Colors</h2>
+
+      <button
+        class="close"
+        data-close="colorModal">
+        ×
+      </button>
+
+    </div>
+
+    <div class="choiceGrid">
+
+      <button class="choice" data-color="#ffd21c">
+        <span
+          class="colorDot"
+          style="background:#ffd21c">
+        </span>
+        <small>Yellow</small>
+      </button>
+
+      <button class="choice" data-color="#29d34d">
+        <span
+          class="colorDot"
+          style="background:#29d34d">
+        </span>
+        <small>Green</small>
+      </button>
+
+      <button class="choice" data-color="#ff3b3b">
+        <span
+          class="colorDot"
+          style="background:#ff3b3b">
+        </span>
+        <small>Red</small>
+      </button>
+
+      <button class="choice" data-color="#2f80ff">
+        <span
+          class="colorDot"
+          style="background:#2f80ff">
+        </span>
+        <small>Blue</small>
+      </button>
+
+      <button class="choice" data-color="#ff8a18">
+        <span
+          class="colorDot"
+          style="background:#ff8a18">
+        </span>
+        <small>Orange</small>
+      </button>
+
+      <button class="choice" data-color="#9b42ff">
+        <span
+          class="colorDot"
+          style="background:#9b42ff">
+        </span>
+        <small>Purple</small>
+      </button>
+
+      <button class="choice" data-color="#ff5db1">
+        <span
+          class="colorDot"
+          style="background:#ff5db1">
+        </span>
+        <small>Pink</small>
+      </button>
+
+      <button class="choice" data-color="#19dfff">
+        <span
+          class="colorDot"
+          style="background:#19dfff">
+        </span>
+        <small>Cyan</small>
+      </button>
+
+      <button class="choice" data-color="#ffffff">
+        <span
+          class="colorDot"
+          style="background:#ffffff">
+        </span>
+        <small>White</small>
+      </button>
+
+      <button class="choice" data-color="#202020">
+        <span
+          class="colorDot"
+          style="background:#202020">
+        </span>
+        <small>Black</small>
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     EMOJI MODAL
+===================================================== -->
 
 <div class="modal" id="faceModal">
 
-<div class="card">
+  <div class="modalCard">
 
-<h2>🎭 Snake Faces</h2>
+    <div class="modalHeader">
 
-<div class="grid">
+      <h2>😀 Snake Emoji</h2>
 
-<button class="choice" data-face="🙂">🙂<small>Normal</small></button>
-<button class="choice" data-face="😄">😄<small>Happy</small></button>
-<button class="choice" data-face="😎">😎<small>Cool</small></button>
-<button class="choice" data-face="😡">😡<small>Angry</small></button>
-<button class="choice" data-face="😈">😈<small>Danger</small></button>
+      <button
+        class="close"
+        data-close="faceModal">
+        ×
+      </button>
 
-<button class="choice" data-face="😢">😢<small>Sad</small></button>
-<button class="choice" data-face="😭">😭<small>Crying</small></button>
-<button class="choice" data-face="😱">😱<small>Scared</small></button>
-<button class="choice" data-face="😴">😴<small>Sleepy</small></button>
-<button class="choice" data-face="🤪">🤪<small>Crazy</small></button>
+    </div>
 
-<button class="choice" data-face="😂">😂<small>Laugh</small></button>
-<button class="choice" data-face="🥺">🥺<small>Innocent</small></button>
-<button class="choice" data-face="🤩">🤩<small>Excited</small></button>
-<button class="choice" data-face="😤">😤<small>Mad</small></button>
-<button class="choice" data-face="😇">😇<small>Angel</small></button>
+    <div class="choiceGrid">
+
+      <button class="choice" data-face="🙂">
+        🙂<small>Normal</small>
+      </button>
+
+      <button class="choice" data-face="😎">
+        😎<small>Cool</small>
+      </button>
+
+      <button class="choice" data-face="😍">
+        😍<small>Love</small>
+      </button>
+
+      <button class="choice" data-face="😡">
+        😡<small>Angry</small>
+      </button>
+
+      <button class="choice" data-face="😴">
+        😴<small>Sleepy</small>
+      </button>
+
+      <button class="choice" data-face="😮">
+        😮<small>Surprised</small>
+      </button>
+
+      <button class="choice" data-face="🥰">
+        🥰<small>Cute</small>
+      </button>
+
+      <button class="choice" data-face="😉">
+        😉<small>Wink</small>
+      </button>
+
+      <button class="choice" data-face="😢">
+        😢<small>Sad</small>
+      </button>
+
+      <button class="choice" data-face="😈">
+        😈<small>Danger</small>
+      </button>
+
+    </div>
+
+  </div>
 
 </div>
 
-<button class="close" data-close="faceModal">
-बंद करें
-</button>
 
-</div>
-
-</div>
-
-
-<!-- GIFT SHOP -->
+<!-- =====================================================
+     GIFT MODAL
+===================================================== -->
 
 <div class="modal" id="giftModal">
 
-<div class="card">
+  <div class="modalCard">
 
-<h2>🎁 Gift Shop</h2>
+    <div class="modalHeader">
 
-<p>
-तुम्हारे Coins:
-🪙 <b id="shopCoins">0</b>
-</p>
+      <h2>🎁 Coin Gifts</h2>
 
-<div class="shopItem">
+      <button
+        class="close"
+        data-close="giftModal">
+        ×
+      </button>
 
-<span>👑 Golden Crown</span>
+    </div>
 
-<button class="buy" data-cost="100">
-100 🪙
-</button>
+    <p style="text-align:center;margin-bottom:15px">
+      आपके Coins:
+      🪙 <b id="giftCoins">0</b>
+    </p>
 
-</div>
+    <div class="choiceGrid">
 
-<div class="shopItem">
+      <button
+        class="choice buy"
+        data-cost="50">
+        👑
+        <small>50 Coins</small>
+      </button>
 
-<span>⚡ Speed Trail</span>
+      <button
+        class="choice buy"
+        data-cost="100">
+        ⚡
+        <small>100 Coins</small>
+      </button>
 
-<button class="buy" data-cost="150">
-150 🪙
-</button>
+      <button
+        class="choice buy"
+        data-cost="150">
+        💎
+        <small>150 Coins</small>
+      </button>
 
-</div>
+    </div>
 
-<div class="shopItem">
-
-<span>💎 Diamond Face</span>
-
-<button class="buy" data-cost="250">
-250 🪙
-</button>
-
-</div>
-
-<div class="shopItem">
-
-<span>🛡️ Shield</span>
-
-<button class="buy" data-cost="500">
-500 🪙
-</button>
-
-</div>
-
-<button class="close" data-close="giftModal">
-बंद करें
-</button>
-
-</div>
+  </div>
 
 </div>
 
 
-<!-- 100 FRUIT GIFT -->
+<!-- =====================================================
+     GAME OVER
+===================================================== -->
 
-<div class="modal" id="rewardModal">
+<div class="modal" id="gameOverModal">
 
-<div class="card" style="text-align:center">
+  <div class="modalCard gameOver">
 
-<h2>🎁 SPECIAL GIFT!</h2>
+    <h2>💥 GAME OVER</h2>
 
-<div class="bigGift">
-🎁
-</div>
+    <p>
+      Score:
+      <b id="finalScore">0</b>
+    </p>
 
-<div class="rewardBox" id="rewardText"></div>
+    <p>
+      🪙 Coins Saved:
+      <b id="finalCoins">0</b>
+    </p>
 
-<button class="close" data-close="rewardModal">
-बहुत बढ़िया!
-</button>
+    <button
+      class="playAgain"
+      id="againBtn">
+      🎮 PLAY AGAIN
+    </button>
 
-</div>
+  </div>
 
 </div>
 
 
 <script>
 
-/* ==========================================
-   CANVAS
-========================================== */
+/* =====================================================
+   BASIC SETTINGS
+===================================================== */
 
 const canvas =
 document.getElementById("canvas");
@@ -577,1608 +832,1438 @@ canvas.getContext("2d");
 
 const GRID = 20;
 
-
 /*
-   Speed जानबूझकर normal/slow रखी है.
-   यह हर level पर तेज नहीं होगी.
+   बड़ा number = धीमी speed.
+   240 = slow & comfortable.
 */
 
-const SPEED = 180;
+const SPEED = 240;
 
 let tile = 20;
 
 let snake = [];
 
 let fruit = {
-    x:10,
-    y:10
+  x:10,
+  y:10
 };
 
 let direction = {
-    x:1,
-    y:0
+  x:1,
+  y:0
 };
 
 let nextDirection = {
-    x:1,
-    y:0
+  x:1,
+  y:0
 };
 
 let score = 0;
-
 let fruitCount = 0;
 
-let gifts = 0;
-
 let running = true;
-
 let paused = false;
 
 let lastTime = 0;
 
-let selectedFruit = "🍎";
 
-let selectedFace = "😈";
-
-let tongue = false;
-
-let soundEnabled = true;
-
-
-/* ==========================================
-   🪙 PERMANENT COIN SAVE
-========================================== */
-
-
-/*
-   Game शुरू होते ही saved coins load.
-*/
+/* =====================================================
+   PERMANENT SAVED DATA
+===================================================== */
 
 let coins =
 Number(
-    localStorage.getItem("snakeWorldCoins") || 0
+  localStorage.getItem(
+    "snakeCoins"
+  ) || 0
 );
-
-
-/*
-   Coins को permanent save करना.
-*/
-
-function saveCoins(){
-
-    localStorage.setItem(
-        "snakeWorldCoins",
-        String(coins)
-    );
-
-}
-
-
-/*
-   Coins बढ़ाने का function.
-*/
-
-function addCoins(amount){
-
-    coins += amount;
-
-    saveCoins();
-
-    updateUI();
-
-}
-
-
-/*
-   Browser refresh/close पर save.
-*/
-
-window.addEventListener(
-    "beforeunload",
-    saveCoins
-);
-
-
-/*
-   Mobile में app/tab छोड़ने पर save.
-*/
-
-document.addEventListener(
-    "visibilitychange",
-    function(){
-
-        if(
-            document.visibilityState === "hidden"
-        ){
-
-            saveCoins();
-
-        }
-
-    }
-);
-
-
-/* ==========================================
-   BEST SCORE
-========================================== */
 
 let best =
 Number(
-    localStorage.getItem("snakeBest") || 0
+  localStorage.getItem(
+    "snakeBest"
+  ) || 0
 );
 
+let snakeColor =
+localStorage.getItem(
+  "snakeColor"
+) || "#ffd21c";
 
-/* ==========================================
-   🔊 BUILT-IN SOUND ENGINE
-========================================== */
+let snakeFace =
+localStorage.getItem(
+  "snakeFace"
+) || "😈";
+
+let selectedFruit =
+localStorage.getItem(
+  "snakeFruit"
+) || "🍎";
 
 
-/*
-   कोई external MP3/WAV file नहीं.
-   Sound browser के अंदर generate होगा.
-*/
+/* =====================================================
+   SOUND
+===================================================== */
 
-let audioContext = null;
+let soundOn = true;
 
+let audio = null;
 
-function startAudio(){
+function initAudio(){
 
-    if(!soundEnabled)
-        return;
+  if(audio) return;
 
-    if(!audioContext){
+  const AudioContext =
+    window.AudioContext ||
+    window.webkitAudioContext;
 
-        const AudioCtx =
-            window.AudioContext ||
-            window.webkitAudioContext;
-
-        if(AudioCtx){
-
-            audioContext =
-                new AudioCtx();
-
-        }
-
-    }
-
-    if(
-        audioContext &&
-        audioContext.state === "suspended"
-    ){
-
-        audioContext.resume();
-
-    }
+  if(AudioContext){
+    audio = new AudioContext();
+  }
 
 }
 
-
-/*
-   Basic tone.
-*/
-
-function tone(
-    frequency,
-    duration,
-    type="sine",
-    volume=.12,
-    delay=0
+function beep(
+  frequency,
+  duration,
+  volume=.14
 ){
 
-    if(!soundEnabled)
-        return;
+  if(!soundOn) return;
 
-    startAudio();
+  initAudio();
 
-    if(!audioContext)
-        return;
+  if(!audio) return;
 
+  const osc =
+    audio.createOscillator();
 
-    const oscillator =
-        audioContext.createOscillator();
+  const gain =
+    audio.createGain();
 
-    const gain =
-        audioContext.createGain();
+  osc.frequency.value =
+    frequency;
 
+  osc.type =
+    "triangle";
 
-    oscillator.type = type;
+  gain.gain.setValueAtTime(
+    .001,
+    audio.currentTime
+  );
 
-    oscillator.frequency.setValueAtTime(
-        frequency,
-        audioContext.currentTime + delay
-    );
+  gain.gain.exponentialRampToValueAtTime(
+    volume,
+    audio.currentTime+.02
+  );
 
+  gain.gain.exponentialRampToValueAtTime(
+    .001,
+    audio.currentTime+duration
+  );
 
-    gain.gain.setValueAtTime(
-        .001,
-        audioContext.currentTime + delay
-    );
+  osc.connect(gain);
+  gain.connect(audio.destination);
 
+  osc.start();
 
-    gain.gain.exponentialRampToValueAtTime(
-        volume,
-        audioContext.currentTime +
-        delay +
-        .015
-    );
-
-
-    gain.gain.exponentialRampToValueAtTime(
-        .001,
-        audioContext.currentTime +
-        delay +
-        duration
-    );
-
-
-    oscillator.connect(gain);
-
-    gain.connect(
-        audioContext.destination
-    );
-
-
-    oscillator.start(
-        audioContext.currentTime +
-        delay
-    );
-
-
-    oscillator.stop(
-        audioContext.currentTime +
-        delay +
-        duration +
-        .02
-    );
+  osc.stop(
+    audio.currentTime+
+    duration+
+    .03
+  );
 
 }
 
 
-/*
-   🍎 FRUIT SOUND
-   "टुइंग-टुइंग" जैसा दो-tone effect.
-*/
+/* Fruit = Twing Twing */
 
-function playFruitSound(){
+function fruitSound(){
 
-    tone(
-        880,
-        .12,
-        "triangle",
-        .16,
-        0
-    );
+  beep(850,.12,.18);
 
-    tone(
-        1320,
-        .16,
-        "triangle",
-        .15,
-        .10
-    );
+  setTimeout(
+    () => beep(1250,.16,.18),
+    100
+  );
 
 }
 
 
-/*
-   💥 WALL/BODY SOUND
-*/
+/* Wall = Thak */
 
-function playCrashSound(){
+function crashSound(){
 
-    tone(
-        120,
-        .16,
-        "square",
-        .16,
-        0
-    );
+  beep(120,.18,.2);
 
-    tone(
-        70,
-        .22,
-        "square",
-        .13,
-        .13
-    );
+  setTimeout(
+    () => beep(70,.25,.16),
+    120
+  );
 
 }
 
 
-/*
-   🎁 GIFT SOUND
-*/
+/* Gift */
 
-function playGiftSound(){
+function giftSound(){
 
-    tone(
-        523,
-        .12,
-        "triangle",
-        .13,
-        0
-    );
+  beep(500,.12,.15);
 
-    tone(
-        659,
-        .12,
-        "triangle",
-        .13,
-        .12
-    );
+  setTimeout(
+    () => beep(750,.12,.15),
+    100
+  );
 
-    tone(
-        880,
-        .18,
-        "triangle",
-        .14,
-        .24
-    );
+  setTimeout(
+    () => beep(1000,.18,.15),
+    200
+  );
 
 }
 
 
-/*
-   🪙 COIN PURCHASE SOUND
-*/
+/* =====================================================
+   SAVE COINS
+===================================================== */
 
-function playCoinSound(){
+function saveCoins(){
 
-    tone(
-        700,
-        .10,
-        "sine",
-        .12,
-        0
-    );
+  localStorage.setItem(
+    "snakeCoins",
+    String(coins)
+  );
 
-    tone(
-        1000,
-        .13,
-        "sine",
-        .12,
-        .10
-    );
+}
+
+function addCoins(amount){
+
+  coins += amount;
+
+  saveCoins();
+
+  updateUI();
 
 }
 
 
-/* ==========================================
+/* =====================================================
    RESIZE
-========================================== */
+===================================================== */
 
 function resize(){
 
-    const rect =
-        canvas.getBoundingClientRect();
+  const rect =
+    canvas.getBoundingClientRect();
 
-    canvas.width =
-        rect.width;
+  canvas.width =
+    rect.width;
 
-    canvas.height =
-        rect.height;
+  canvas.height =
+    rect.height;
 
-    tile =
-        canvas.width / GRID;
+  tile =
+    canvas.width / GRID;
 
-    draw();
+  draw();
 
 }
 
 window.addEventListener(
-    "resize",
-    resize
+  "resize",
+  resize
 );
 
 
-/* ==========================================
-   START GAME
-========================================== */
+/* =====================================================
+   NEW GAME
+===================================================== */
 
-function startGame(){
+function newGame(){
 
-    snake = [
+  snake = [
 
-        {x:10,y:10},
-        {x:9,y:10},
-        {x:8,y:10},
-        {x:7,y:10}
+    {x:10,y:10},
+    {x:9,y:10},
+    {x:8,y:10},
+    {x:7,y:10}
 
-    ];
+  ];
 
+  direction = {
+    x:1,
+    y:0
+  };
 
-    direction = {
-        x:1,
-        y:0
-    };
+  nextDirection = {
+    x:1,
+    y:0
+  };
 
+  score = 0;
+  fruitCount = 0;
 
-    nextDirection = {
-        x:1,
-        y:0
-    };
+  running = true;
+  paused = false;
 
+  document
+  .getElementById(
+    "pauseOverlay"
+  )
+  .classList
+  .remove("show");
 
-    score = 0;
+  document
+  .getElementById(
+    "pauseBtn"
+  )
+  .textContent =
+  "⏸️";
 
-    fruitCount = 0;
+  createFruit();
 
-    running = true;
+  closeModal(
+    "gameOverModal"
+  );
 
-    paused = false;
-
-
-    /*
-       IMPORTANT:
-       यहाँ coins को zero नहीं किया गया.
-    */
-
-    createFruit();
-
-    document
-        .getElementById("gameOverModal")
-        .classList.remove("show");
-
-    updateUI();
+  updateUI();
 
 }
 
 
-/* ==========================================
+/* =====================================================
    FRUIT
-========================================== */
+===================================================== */
 
 function createFruit(){
 
-    let valid = false;
+  let okay = false;
 
+  while(!okay){
 
-    while(!valid){
+    fruit = {
 
-        fruit = {
+      x:
+      Math.floor(
+        Math.random()*GRID
+      ),
 
-            x:
-                Math.floor(
-                    Math.random() * GRID
-                ),
+      y:
+      Math.floor(
+        Math.random()*GRID
+      )
 
-            y:
-                Math.floor(
-                    Math.random() * GRID
-                )
-
-        };
-
-
-        valid =
-            !snake.some(
-                part =>
-                    part.x === fruit.x &&
-                    part.y === fruit.y
-            );
-
-    }
-
-}
-
-
-/* ==========================================
-   DIRECTION
-========================================== */
-
-function changeDirection(x,y){
-
-    if(!running || paused)
-        return;
-
-
-    if(
-        x === -direction.x &&
-        y === -direction.y
-    ){
-
-        return;
-
-    }
-
-
-    nextDirection = {
-        x:x,
-        y:y
     };
 
+    okay =
+      !snake.some(
+        part =>
+          part.x === fruit.x &&
+          part.y === fruit.y
+      );
+
+  }
+
 }
 
 
-/* ==========================================
-   KEYBOARD
-========================================== */
+/* =====================================================
+   DIRECTION
+===================================================== */
+
+function setDirection(x,y){
+
+  if(!running || paused)
+    return;
+
+  if(
+    x === -direction.x &&
+    y === -direction.y
+  ){
+    return;
+  }
+
+  nextDirection = {
+    x:x,
+    y:y
+  };
+
+}
+
+
+/* Keyboard */
 
 document.addEventListener(
-    "keydown",
-    function(e){
+  "keydown",
+  e => {
 
-        if(e.key === "ArrowUp")
-            changeDirection(0,-1);
-
-        if(e.key === "ArrowDown")
-            changeDirection(0,1);
-
-        if(e.key === "ArrowLeft")
-            changeDirection(-1,0);
-
-        if(e.key === "ArrowRight")
-            changeDirection(1,0);
-
+    if(
+      e.key === "ArrowUp"
+    ){
+      e.preventDefault();
+      setDirection(0,-1);
     }
+
+    if(
+      e.key === "ArrowDown"
+    ){
+      e.preventDefault();
+      setDirection(0,1);
+    }
+
+    if(
+      e.key === "ArrowLeft"
+    ){
+      e.preventDefault();
+      setDirection(-1,0);
+    }
+
+    if(
+      e.key === "ArrowRight"
+    ){
+      e.preventDefault();
+      setDirection(1,0);
+    }
+
+    if(
+      e.code === "Space"
+    ){
+      e.preventDefault();
+      togglePause();
+    }
+
+  }
 );
 
 
-/* ==========================================
-   CONTROL BUTTONS
-========================================== */
+/* Mobile buttons */
 
 document
-    .querySelectorAll(".control")
-    .forEach(
-        button => {
+.querySelectorAll(".control")
+.forEach(
+  button => {
 
-            button.addEventListener(
-                "click",
-                function(){
+    button.addEventListener(
+      "click",
+      () => {
 
-                    startAudio();
+        initAudio();
 
-                    const d =
-                        button.dataset.dir;
+        const d =
+          button.dataset.dir;
 
-                    if(d === "up")
-                        changeDirection(0,-1);
+        if(d === "up")
+          setDirection(0,-1);
 
-                    if(d === "down")
-                        changeDirection(0,1);
+        if(d === "down")
+          setDirection(0,1);
 
-                    if(d === "left")
-                        changeDirection(-1,0);
+        if(d === "left")
+          setDirection(-1,0);
 
-                    if(d === "right")
-                        changeDirection(1,0);
+        if(d === "right")
+          setDirection(1,0);
 
-                }
-            );
-
-        }
+      }
     );
 
-
-/* ==========================================
-   TOUCH SWIPE
-========================================== */
-
-let touchStartX = 0;
-
-let touchStartY = 0;
-
-
-canvas.addEventListener(
-    "touchstart",
-    function(e){
-
-        touchStartX =
-            e.changedTouches[0].clientX;
-
-        touchStartY =
-            e.changedTouches[0].clientY;
-
-    },
-    {passive:true}
+  }
 );
 
 
-canvas.addEventListener(
-    "touchend",
-    function(e){
+/* =====================================================
+   PAUSE
+===================================================== */
 
-        const x =
-            e.changedTouches[0].clientX;
+function togglePause(){
 
-        const y =
-            e.changedTouches[0].clientY;
+  if(!running)
+    return;
 
-        const dx =
-            x - touchStartX;
+  paused =
+    !paused;
 
-        const dy =
-            y - touchStartY;
+  document
+  .getElementById(
+    "pauseOverlay"
+  )
+  .classList.toggle(
+    "show",
+    paused
+  );
 
+  document
+  .getElementById(
+    "pauseBtn"
+  )
+  .textContent =
+  paused ? "▶️" : "⏸️";
 
-        if(
-            Math.abs(dx) < 20 &&
-            Math.abs(dy) < 20
-        ){
+}
 
-            return;
+document
+.getElementById("pauseBtn")
+.onclick = () => {
 
-        }
+  initAudio();
 
+  togglePause();
 
-        if(
-            Math.abs(dx) >
-            Math.abs(dy)
-        ){
-
-            changeDirection(
-                dx > 0 ? 1 : -1,
-                0
-            );
-
-        }
-        else{
-
-            changeDirection(
-                0,
-                dy > 0 ? 1 : -1
-            );
-
-        }
-
-    },
-    {passive:true}
-);
+};
 
 
-/* ==========================================
-   UPDATE GAME
-========================================== */
+/* =====================================================
+   UPDATE
+===================================================== */
 
 function update(){
 
-    if(
-        !running ||
-        paused
-    ){
+  if(!running || paused)
+    return;
 
-        return;
+  direction =
+    nextDirection;
 
-    }
+  const head = {
 
+    x:
+      snake[0].x +
+      direction.x,
 
-    direction =
-        nextDirection;
+    y:
+      snake[0].y +
+      direction.y
 
-
-    const head = {
-
-        x:
-            snake[0].x +
-            direction.x,
-
-        y:
-            snake[0].y +
-            direction.y
-
-    };
+  };
 
 
-    /* WALL */
+  /* WALL COLLISION */
 
-    if(
+  if(
+    head.x < 0 ||
+    head.x >= GRID ||
+    head.y < 0 ||
+    head.y >= GRID
+  ){
 
-        head.x < 0 ||
-        head.x >= GRID ||
-        head.y < 0 ||
-        head.y >= GRID
+    gameOver();
 
-    ){
+    return;
 
-        gameOver();
-
-        return;
-
-    }
+  }
 
 
-    /* BODY */
+  /* BODY COLLISION */
 
-    if(
-        snake.some(
-            part =>
-                part.x === head.x &&
-                part.y === head.y
-        )
-    ){
+  if(
+    snake.some(
+      part =>
+        part.x === head.x &&
+        part.y === head.y
+    )
+  ){
 
-        gameOver();
+    gameOver();
 
-        return;
+    return;
 
-    }
-
-
-    snake.unshift(head);
+  }
 
 
-    /* ==================================
-       🍎 FRUIT EAT
-    ================================== */
-
-    if(
-
-        head.x === fruit.x &&
-        head.y === fruit.y
-
-    ){
-
-        score += 10;
-
-        fruitCount++;
+  snake.unshift(head);
 
 
-        /*
-           🪙 Coin immediately save.
-        */
+  /* FRUIT */
 
-        addCoins(2);
+  if(
+    head.x === fruit.x &&
+    head.y === fruit.y
+  ){
 
+    score += 10;
 
-        /*
-           🔊 टुइंग-टुइंग
-        */
-
-        playFruitSound();
-
-
-        createFruit();
-
-
-        /*
-           हर 100 fruits पर special gift.
-        */
-
-        if(
-            fruitCount % 100 === 0
-        ){
-
-            gifts++;
-
-            addCoins(50);
-
-            showSpecialGift();
-
-        }
-
-
-        saveBest();
-
-    }
-    else{
-
-        /*
-           Fruit नहीं खाया तो tail हटेगी.
-        */
-
-        snake.pop();
-
-    }
-
-
-    updateUI();
-
-}
-
-
-/* ==========================================
-   GAME OVER
-========================================== */
-
-function gameOver(){
-
-    running = false;
-
+    fruitCount++;
 
     /*
-       Coins हमेशा सुरक्षित.
+      हर fruit को coins में convert किया जाता है.
+      एक समय में केवल एक fruit रहता है.
     */
 
-    saveCoins();
+    addCoins(2);
 
+    fruitSound();
 
-    playCrashSound();
+    createFruit();
 
-
-    document.getElementById(
-        "finalScore"
-    ).textContent = score;
-
-
-    document.getElementById(
-        "finalFruits"
-    ).textContent = fruitCount;
-
-
-    document.getElementById(
-        "finalCoins"
-    ).textContent = coins;
-
-
-    setTimeout(
-        function(){
-
-            document
-                .getElementById(
-                    "gameOverModal"
-                )
-                .classList.add("show");
-
-        },
-        180
-    );
-
-}
-
-
-/* ==========================================
-   BEST SCORE
-========================================== */
-
-function saveBest(){
 
     if(score > best){
 
-        best = score;
+      best = score;
 
-        localStorage.setItem(
-            "snakeBest",
-            String(best)
-        );
+      localStorage.setItem(
+        "snakeBest",
+        String(best)
+      );
 
     }
 
-}
+  }
+  else{
 
+    snake.pop();
 
-/* ==========================================
-   UI
-========================================== */
+  }
 
-function updateUI(){
-
-    document.getElementById(
-        "score"
-    ).textContent = score;
-
-
-    document.getElementById(
-        "fruitCount"
-    ).textContent = fruitCount;
-
-
-    document.getElementById(
-        "coins"
-    ).textContent = coins;
-
-
-    document.getElementById(
-        "best"
-    ).textContent = best;
-
-
-    document.getElementById(
-        "shopCoins"
-    ).textContent = coins;
+  updateUI();
 
 }
 
 
-/* ==========================================
+/* =====================================================
+   GAME OVER
+===================================================== */
+
+function gameOver(){
+
+  running = false;
+
+  saveCoins();
+
+  crashSound();
+
+  document
+  .getElementById(
+    "finalScore"
+  )
+  .textContent =
+  score;
+
+  document
+  .getElementById(
+    "finalCoins"
+  )
+  .textContent =
+  coins;
+
+  setTimeout(
+    () => {
+
+      openModal(
+        "gameOverModal"
+      );
+
+    },
+    150
+  );
+
+}
+
+
+/* =====================================================
    DRAW
-========================================== */
+===================================================== */
 
 function draw(){
 
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
 
 
-    /*
-       Snake play area हमेशा green.
-    */
+  /* GREEN PLAY AREA */
 
-    ctx.fillStyle = "#138a2e";
+  ctx.fillStyle =
+    "#158b31";
 
-    ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    drawFruit();
+  ctx.fillRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
 
 
-    snake.forEach(
-        function(part,index){
+  /* हल्का grid */
 
-            drawSnake(
-                part,
-                index
-            );
+  ctx.strokeStyle =
+    "rgba(0,0,0,.08)";
 
-        }
-    );
+  ctx.lineWidth = 1;
 
-}
-
-
-/* ==========================================
-   FRUIT DRAW
-========================================== */
-
-function drawFruit(){
-
-    const x =
-        fruit.x * tile +
-        tile / 2;
-
-    const y =
-        fruit.y * tile +
-        tile / 2;
-
-
-    ctx.font =
-        `${tile * .72}px Arial`;
-
-    ctx.textAlign = "center";
-
-    ctx.textBaseline = "middle";
-
-
-    ctx.fillText(
-        selectedFruit,
-        x,
-        y
-    );
-
-}
-
-
-/* ==========================================
-   SNAKE
-========================================== */
-
-function drawSnake(
-    part,
-    index
-){
-
-    const x =
-        part.x * tile + 1;
-
-    const y =
-        part.y * tile + 1;
-
-    const size =
-        tile - 2;
-
-
-    /*
-       Snake yellow.
-    */
-
-    ctx.fillStyle =
-        "#ffd21c";
-
-
-    roundRect(
-        x,
-        y,
-        size,
-        size,
-        5
-    );
-
-
-    if(index === 0){
-
-        drawHead(
-            x,
-            y,
-            size
-        );
-
-    }
-
-}
-
-
-/* ==========================================
-   ROUND RECT
-========================================== */
-
-function roundRect(
-    x,
-    y,
-    w,
-    h,
-    r
-){
+  for(
+    let i=0;
+    i<=GRID;
+    i++
+  ){
 
     ctx.beginPath();
 
     ctx.moveTo(
-        x+r,
-        y
+      i*tile,
+      0
     );
 
     ctx.lineTo(
-        x+w-r,
-        y
+      i*tile,
+      canvas.height
     );
 
-    ctx.quadraticCurveTo(
-        x+w,
-        y,
-        x+w,
-        y+r
-    );
-
-    ctx.lineTo(
-        x+w,
-        y+h-r
-    );
-
-    ctx.quadraticCurveTo(
-        x+w,
-        y+h,
-        x+w-r,
-        y+h
-    );
-
-    ctx.lineTo(
-        x+r,
-        y+h
-    );
-
-    ctx.quadraticCurveTo(
-        x,
-        y+h,
-        x,
-        y+h-r
-    );
-
-    ctx.lineTo(
-        x,
-        y+r
-    );
-
-    ctx.quadraticCurveTo(
-        x,
-        y,
-        x+r,
-        y
-    );
-
-    ctx.closePath();
-
-    ctx.fill();
-
-}
-
-
-/* ==========================================
-   SNAKE HEAD
-========================================== */
-
-function drawHead(
-    x,
-    y,
-    size
-){
-
-    ctx.save();
-
-
-    ctx.translate(
-        x + size/2,
-        y + size/2
-    );
-
-
-    let angle = 0;
-
-
-    if(direction.x === -1)
-        angle = Math.PI;
-
-    if(direction.y === -1)
-        angle = -Math.PI/2;
-
-    if(direction.y === 1)
-        angle = Math.PI/2;
-
-
-    ctx.rotate(angle);
-
-
-    ctx.translate(
-        -size/2,
-        -size/2
-    );
-
-
-    /*
-       Black eyes.
-    */
-
-    ctx.fillStyle = "#000";
-
+    ctx.stroke();
 
     ctx.beginPath();
 
-    ctx.arc(
-        size*.30,
-        size*.30,
-        size*.085,
-        0,
-        Math.PI*2
+    ctx.moveTo(
+      0,
+      i*tile
     );
 
-    ctx.fill();
-
-
-    ctx.beginPath();
-
-    ctx.arc(
-        size*.70,
-        size*.30,
-        size*.085,
-        0,
-        Math.PI*2
+    ctx.lineTo(
+      canvas.width,
+      i*tile
     );
 
-    ctx.fill();
+    ctx.stroke();
+
+  }
 
 
-    /*
-       Tongue animation.
-    */
+  /* Fruit */
 
-    const showTongue =
-        Math.floor(
-            performance.now()/330
-        ) % 2 === 0;
+  ctx.font =
+    `${tile*.72}px Arial`;
+
+  ctx.textAlign =
+    "center";
+
+  ctx.textBaseline =
+    "middle";
+
+  ctx.fillText(
+    selectedFruit,
+    fruit.x*tile+tile/2,
+    fruit.y*tile+tile/2
+  );
 
 
-    if(showTongue){
+  /* Snake */
 
-        ctx.strokeStyle =
-            "#ff3030";
+  snake.forEach(
+    (part,index) => {
 
-        ctx.lineWidth = 2;
+      ctx.fillStyle =
+        snakeColor;
 
+      const x =
+        part.x*tile+2;
 
-        ctx.beginPath();
+      const y =
+        part.y*tile+2;
 
-        ctx.moveTo(
-            size/2,
-            size*.64
+      const size =
+        tile-4;
+
+      roundRect(
+        x,
+        y,
+        size,
+        size,
+        6
+      );
+
+      if(index === 0){
+
+        drawHead(
+          x,
+          y,
+          size
         );
 
-        ctx.lineTo(
-            size/2,
-            size
-        );
-
-        ctx.stroke();
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            size/2,
-            size
-        );
-
-        ctx.lineTo(
-            size*.40,
-            size*.90
-        );
-
-        ctx.moveTo(
-            size/2,
-            size
-        );
-
-        ctx.lineTo(
-            size*.60,
-            size*.90
-        );
-
-        ctx.stroke();
+      }
 
     }
-
-
-    ctx.restore();
+  );
 
 }
 
 
-/* ==========================================
+/* =====================================================
+   ROUND RECT
+===================================================== */
+
+function roundRect(
+  x,y,w,h,r
+){
+
+  ctx.beginPath();
+
+  ctx.moveTo(x+r,y);
+
+  ctx.lineTo(
+    x+w-r,
+    y
+  );
+
+  ctx.quadraticCurveTo(
+    x+w,
+    y,
+    x+w,
+    y+r
+  );
+
+  ctx.lineTo(
+    x+w,
+    y+h-r
+  );
+
+  ctx.quadraticCurveTo(
+    x+w,
+    y+h,
+    x+w-r,
+    y+h
+  );
+
+  ctx.lineTo(
+    x+r,
+    y+h
+  );
+
+  ctx.quadraticCurveTo(
+    x,
+    y+h,
+    x,
+    y+h-r
+  );
+
+  ctx.lineTo(
+    x,
+    y+r
+  );
+
+  ctx.quadraticCurveTo(
+    x,
+    y,
+    x+r,
+    y
+  );
+
+  ctx.closePath();
+
+  ctx.fill();
+
+}
+
+
+/* =====================================================
+   SNAKE HEAD
+===================================================== */
+
+function drawHead(
+  x,y,size
+){
+
+  ctx.save();
+
+  ctx.translate(
+    x+size/2,
+    y+size/2
+  );
+
+
+  let angle = 0;
+
+  if(direction.x === -1)
+    angle = Math.PI;
+
+  if(direction.y === -1)
+    angle = -Math.PI/2;
+
+  if(direction.y === 1)
+    angle = Math.PI/2;
+
+  ctx.rotate(angle);
+
+  ctx.translate(
+    -size/2,
+    -size/2
+  );
+
+
+  /*
+    Two black eyes
+  */
+
+  ctx.fillStyle =
+    "#000";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    size*.30,
+    size*.30,
+    size*.09,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  ctx.beginPath();
+
+  ctx.arc(
+    size*.70,
+    size*.30,
+    size*.09,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+
+  /*
+    Tongue
+  */
+
+  ctx.strokeStyle =
+    "#ff3333";
+
+  ctx.lineWidth = 2;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    size/2,
+    size*.62
+  );
+
+  ctx.lineTo(
+    size/2,
+    size
+  );
+
+  ctx.stroke();
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    size/2,
+    size
+  );
+
+  ctx.lineTo(
+    size*.39,
+    size*.89
+  );
+
+  ctx.moveTo(
+    size/2,
+    size
+  );
+
+  ctx.lineTo(
+    size*.61,
+    size*.89
+  );
+
+  ctx.stroke();
+
+
+  /*
+    Selected emoji face
+  */
+
+  ctx.font =
+    `${size*.45}px Arial`;
+
+  ctx.textAlign =
+    "center";
+
+  ctx.textBaseline =
+    "middle";
+
+  ctx.fillText(
+    snakeFace,
+    size/2,
+    size*.65
+  );
+
+
+  ctx.restore();
+
+}
+
+
+/* =====================================================
+   UI
+===================================================== */
+
+function updateUI(){
+
+  document.getElementById(
+    "score"
+  ).textContent =
+  score;
+
+  document.getElementById(
+    "fruitCount"
+  ).textContent =
+  fruitCount;
+
+  document.getElementById(
+    "coins"
+  ).textContent =
+  coins;
+
+  document.getElementById(
+    "best"
+  ).textContent =
+  best;
+
+  document.getElementById(
+    "giftCoins"
+  ).textContent =
+  coins;
+
+}
+
+
+/* =====================================================
    MODALS
-========================================== */
+===================================================== */
 
 function openModal(id){
 
-    document
-        .getElementById(id)
-        .classList
-        .add("show");
+  document
+  .getElementById(id)
+  .classList
+  .add("show");
 
 }
-
 
 function closeModal(id){
 
-    document
-        .getElementById(id)
-        .classList
-        .remove("show");
+  document
+  .getElementById(id)
+  .classList
+  .remove("show");
 
 }
 
 
 document
-    .querySelectorAll("[data-close]")
-    .forEach(
-        button => {
+.querySelectorAll("[data-close]")
+.forEach(
+  button => {
 
-            button.onclick =
-            function(){
+    button.onclick =
+    () => {
 
-                closeModal(
-                    button.dataset.close
-                );
+      closeModal(
+        button.dataset.close
+      );
 
-            };
+    };
 
-        }
-    );
+  }
+);
 
 
-/* ==========================================
-   FRUIT BUTTON
-========================================== */
+/* =====================================================
+   MENU BUTTONS
+===================================================== */
 
-document.getElementById(
-    "fruitButton"
-).onclick = function(){
+document
+.getElementById("fruitMenu")
+.onclick =
+() => openModal("fruitModal");
 
-    startAudio();
+document
+.getElementById("colorMenu")
+.onclick =
+() => openModal("colorModal");
 
-    openModal(
+document
+.getElementById("faceMenu")
+.onclick =
+() => openModal("faceModal");
+
+document
+.getElementById("giftMenu")
+.onclick =
+() => openModal("giftModal");
+
+
+/* =====================================================
+   FRUIT SELECT
+===================================================== */
+
+document
+.querySelectorAll("[data-fruit]")
+.forEach(
+  button => {
+
+    button.onclick =
+    () => {
+
+      selectedFruit =
+        button.dataset.fruit;
+
+      localStorage.setItem(
+        "snakeFruit",
+        selectedFruit
+      );
+
+      markSelected(
+        "[data-fruit]",
+        button
+      );
+
+      closeModal(
         "fruitModal"
-    );
+      );
 
-};
+    };
 
+  }
+);
+
+
+/* =====================================================
+   COLOR SELECT
+===================================================== */
 
 document
-    .querySelectorAll("[data-fruit]")
-    .forEach(
-        button => {
+.querySelectorAll("[data-color]")
+.forEach(
+  button => {
 
-            button.onclick =
-            function(){
+    button.onclick =
+    () => {
 
-                selectedFruit =
-                    button.dataset.fruit;
+      snakeColor =
+        button.dataset.color;
 
+      localStorage.setItem(
+        "snakeColor",
+        snakeColor
+      );
 
-                document
-                    .querySelectorAll(
-                        "[data-fruit]"
-                    )
-                    .forEach(
-                        b =>
-                            b.classList
-                             .remove("selected")
-                    );
+      markSelected(
+        "[data-color]",
+        button
+      );
 
+      closeModal(
+        "colorModal"
+      );
 
-                button.classList.add(
-                    "selected"
-                );
+      initAudio();
 
+      beep(
+        700,
+        .1,
+        .12
+      );
 
-                closeModal(
-                    "fruitModal"
-                );
+    };
 
-
-                tone(
-                    700,
-                    .09,
-                    "triangle",
-                    .10
-                );
-
-            };
-
-        }
-    );
+  }
+);
 
 
-/* ==========================================
-   FACE BUTTON
-========================================== */
+/* =====================================================
+   FACE SELECT
+===================================================== */
 
-document.getElementById(
-    "faceButton"
-).onclick = function(){
+document
+.querySelectorAll("[data-face]")
+.forEach(
+  button => {
 
-    openModal(
+    button.onclick =
+    () => {
+
+      snakeFace =
+        button.dataset.face;
+
+      localStorage.setItem(
+        "snakeFace",
+        snakeFace
+      );
+
+      markSelected(
+        "[data-face]",
+        button
+      );
+
+      closeModal(
         "faceModal"
+      );
+
+    };
+
+  }
+);
+
+
+function markSelected(
+  selector,
+  selected
+){
+
+  document
+  .querySelectorAll(selector)
+  .forEach(
+    b =>
+      b.classList.remove(
+        "selected"
+      )
+  );
+
+  selected.classList.add(
+    "selected"
+  );
+
+}
+
+
+/* =====================================================
+   SOUND BUTTON
+===================================================== */
+
+document
+.getElementById("soundBtn")
+.onclick =
+() => {
+
+  soundOn =
+    !soundOn;
+
+  document
+  .getElementById("soundBtn")
+  .textContent =
+  soundOn ? "🔊" : "🔇";
+
+  if(soundOn){
+
+    initAudio();
+
+    beep(
+      700,
+      .1,
+      .12
     );
+
+  }
 
 };
 
 
+/* =====================================================
+   GIFTS
+===================================================== */
+
 document
-    .querySelectorAll("[data-face]")
-    .forEach(
-        button => {
+.querySelectorAll(".buy")
+.forEach(
+  button => {
 
-            button.onclick =
-            function(){
+    button.onclick =
+    () => {
 
-                selectedFace =
-                    button.dataset.face;
-
-
-                document
-                    .querySelectorAll(
-                        "[data-face]"
-                    )
-                    .forEach(
-                        b =>
-                            b.classList
-                             .remove("selected")
-                    );
-
-
-                button.classList.add(
-                    "selected"
-                );
-
-
-                closeModal(
-                    "faceModal"
-                );
-
-
-                tone(
-                    600,
-                    .08,
-                    "triangle",
-                    .10
-                );
-
-            };
-
-        }
-    );
-
-
-/* ==========================================
-   SOUND ON/OFF
-========================================== */
-
-document.getElementById(
-    "soundButton"
-).onclick = function(){
-
-    soundEnabled =
-        !soundEnabled;
-
-
-    this.textContent =
-        soundEnabled
-        ? "🔊 Sound ON"
-        : "🔇 Sound OFF";
-
-
-    if(soundEnabled){
-
-        startAudio();
-
-        tone(
-            700,
-            .10,
-            "triangle",
-            .12
+      const cost =
+        Number(
+          button.dataset.cost
         );
 
-    }
+      if(coins < cost){
 
-};
+        alert(
+          "🪙 Coins कम हैं!"
+        );
+
+        return;
+
+      }
+
+      coins -= cost;
+
+      saveCoins();
+
+      updateUI();
+
+      giftSound();
+
+      alert(
+        "🎁 Gift Unlocked!"
+      );
+
+    };
+
+  }
+);
 
 
-/* ==========================================
-   GIFT SHOP
-========================================== */
-
-document.getElementById(
-    "giftButton"
-).onclick = function(){
-
-    updateUI();
-
-    openModal(
-        "giftModal"
-    );
-
-};
-
+/* =====================================================
+   PLAY AGAIN
+===================================================== */
 
 document
-    .querySelectorAll(".buy")
-    .forEach(
-        button => {
+.getElementById("againBtn")
+.onclick =
+() => {
 
-            button.onclick =
-            function(){
+  newGame();
 
-                const cost =
-                    Number(
-                        button.dataset.cost
-                    );
+};
 
 
-                if(coins < cost){
+/* =====================================================
+   RESTORE SELECTIONS
+===================================================== */
 
-                    alert(
-                        "🪙 Coins कम हैं!"
-                    );
+function restore(){
 
-                    return;
+  document
+  .querySelectorAll(
+    "[data-fruit]"
+  )
+  .forEach(
+    b => {
 
-                }
+      if(
+        b.dataset.fruit ===
+        selectedFruit
+      ){
 
+        b.classList.add(
+          "selected"
+        );
 
-                /*
-                   खरीदने पर coins कम होंगे
-                   और तुरंत save होंगे.
-                */
+      }
 
-                coins -= cost;
-
-                saveCoins();
-
-                updateUI();
-
-                playCoinSound();
-
-
-                alert(
-                    "🎁 Gift Unlocked!"
-                );
-
-            };
-
-        }
-    );
+    }
+  );
 
 
-/* ==========================================
-   100 FRUIT SPECIAL GIFT
-========================================== */
+  document
+  .querySelectorAll(
+    "[data-color]"
+  )
+  .forEach(
+    b => {
 
-function showSpecialGift(){
+      if(
+        b.dataset.color ===
+        snakeColor
+      ){
 
-    const rewards = [
+        b.classList.add(
+          "selected"
+        );
 
-        "👑 Golden Crown मिला!",
+      }
 
-        "⚡ Special Speed Trail मिला!",
-
-        "💎 Diamond Reward मिला!",
-
-        "🛡️ Shield Reward मिला!",
-
-        "🎭 Special Face मिला!"
-
-    ];
-
-
-    const reward =
-        rewards[
-            Math.floor(
-                Math.random() *
-                rewards.length
-            )
-        ];
+    }
+  );
 
 
-    document.getElementById(
-        "rewardText"
-    ).innerHTML =
-        `<b>${reward}</b><br><br>
-        100 Fruits पूरे करने पर
-        Special Gift मिला!`;
+  document
+  .querySelectorAll(
+    "[data-face]"
+  )
+  .forEach(
+    b => {
 
+      if(
+        b.dataset.face ===
+        snakeFace
+      ){
 
-    openModal(
-        "rewardModal"
-    );
+        b.classList.add(
+          "selected"
+        );
 
+      }
 
-    playGiftSound();
+    }
+  );
 
 }
 
 
-/* ==========================================
-   PLAY AGAIN
-========================================== */
-
-document.getElementById(
-    "playAgain"
-).onclick = function(){
-
-    startGame();
-
-};
-
-
-/* ==========================================
-   INIT
-========================================== */
+/* =====================================================
+   START
+===================================================== */
 
 resize();
 
-startGame();
+newGame();
+
+restore();
 
 updateUI();
 
 
-/* ==========================================
+/* =====================================================
    GAME LOOP
-========================================== */
+===================================================== */
 
-function gameLoop(time){
+function loop(time){
 
-    if(
-        running &&
-        !paused &&
-        time - lastTime >= SPEED
-    ){
+  if(
+    running &&
+    !paused &&
+    time-lastTime >= SPEED
+  ){
 
-        update();
+    update();
 
-        lastTime = time;
+    lastTime = time;
 
-    }
+  }
 
+  draw();
 
-    draw();
-
-
-    requestAnimationFrame(
-        gameLoop
-    );
+  requestAnimationFrame(
+    loop
+  );
 
 }
 
+requestAnimationFrame(loop);
 
-requestAnimationFrame(
-    gameLoop
+
+/* =====================================================
+   SAVE WHEN PAGE IS CLOSED
+===================================================== */
+
+window.addEventListener(
+  "beforeunload",
+  () => {
+
+    saveCoins();
+
+    localStorage.setItem(
+      "snakeColor",
+      snakeColor
+    );
+
+    localStorage.setItem(
+      "snakeFace",
+      snakeFace
+    );
+
+    localStorage.setItem(
+      "snakeFruit",
+      selectedFruit
+    );
+
+  }
 );
 
 </script>
