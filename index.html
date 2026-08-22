@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Fruit Snake Game</title>
+    <style>
+        body {
+            background-color: #051408;
+            color: #39ff14;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        h1 {
+            margin: 5px 0;
+            font-size: 24px;
+            text-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
+        }
+        #stats {
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 5px #00ffcc;
+        }
+        canvas {
+            border: 3px solid #39ff14;
+            background-color: #020b04;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(57, 255, 20, 0.6);
+        }
+        .controls {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(3, 65px);
+            grid-template-rows: repeat(2, 60px);
+            grid-gap: 10px;
+            justify-content: center;
+        }
+        .btn {
+            width: 65px;
+            height: 55px;
+            background: rgba(10, 40, 15, 0.8);
+            border: 2px solid #39ff14;
+            color: #39ff14;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+            touch-action: manipulation;
+        }
+        .btn:active {
+            background: #39ff14;
+            color: #000;
+            box-shadow: 0 0 20px #39ff14;
+        }
+        .up { grid-column: 2; grid-row: 1; }
+        .left { grid-column: 1; grid-row: 2; }
+        .down { grid-column: 2; grid-row: 2; }
+        .right { grid-column: 3; grid-row: 2; }
+    </style>
+</head>
+<body>
+
+    <h1>🐍 SNAKE GAME 🍎</h1>
+    <div id="stats">
+        स्कोर: <span id="score">0</span> | खाए गए फल: <span id="fruit-count">0</span>/5
+    </div>
+    
+    <canvas id="gameCanvas" width="300" height="300"></canvas>
+
+    <div class="controls">
+        <div class="btn up" onclick="changeDir('UP')">▲</div>
+        <div class="btn left" onclick="changeDir('LEFT')">◄</div>
+        <div class="btn down" onclick="changeDir('DOWN')">▼</div>
+        <div class="btn right" onclick="changeDir('RIGHT')">►</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const box = 15;
+
+        // Audio Context for Tui-Tui Sound Creation
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playEatSound() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sine';
+            // Sound Frequency Jump for Tui-Tui effect
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime); 
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1); 
+
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // 10 Fruits with unique colors
+        const fruitTypes = [
+            { name: "एप्पल 🍎", icon: "🍎", color: "#ff2a2a" },
+            { name: "बनाना 🍌", icon: "🍌", color: "#ffe600" },
+            { name: "ग्रेप्स 🍇", icon: "🍇", color: "#b02aff" },
+            { name: "ऑरेंज 🍊", icon: "🍊", color: "#ff8c00" },
+            { name: "स्ट्रॉबेरी 🍓", icon: "🍓", color: "#ff0055" },
+            { name: "वॉटरमेलन 🍉", icon: "🍉", color: "#2aff75" },
+            { name: "पाइनएप्पल 🍍", icon: "🍍", color: "#ffd700" },
+            { name: "किवी 🥝", icon: "🥝", color: "#8bcf00" },
+            { name: "ब्लूबेरी 🫐", icon: "🫐", color: "#3862ff" },
+            { name: "पीच 🍑", icon: "🍑", color: "#ffaa75" }
+        ];
+
+        let currentFruitIndex = 0;
+        let fruitEatenCount = 0;
+        let score = 0;
+        let snakeColor = "#39ff14"; // Default Neon Green
+
+        let snake = [{ x: 9 * box, y: 10 * box }];
+        let food = {
+            x: Math.floor(Math.random() * 19 + 1) * box,
+            y: Math.floor(Math.random() * 19 + 1) * box
+        };
+
+        let d;
+
+        document.addEventListener("keydown", direction);
+
+        function direction(event) {
+            if (event.keyCode == 37 && d != "RIGHT") d = "LEFT";
+            else if (event.keyCode == 38 && d != "DOWN") d = "UP";
+            else if (event.keyCode == 39 && d != "LEFT") d = "RIGHT";
+            else if (event.keyCode == 40 && d != "UP") d = "DOWN";
+        }
+
+        function changeDir(dir) {
+            if (dir == "LEFT" && d != "RIGHT") d = "LEFT";
+            if (dir == "UP" && d != "DOWN") d = "UP";
+            if (dir == "RIGHT" && d != "LEFT") d = "RIGHT";
+            if (dir == "DOWN" && d != "UP") d = "DOWN";
+        }
+
+        function draw() {
+            // Draw Glowing Dark Canvas Background
+            ctx.fillStyle = "#020b04";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Snake
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = (i == 0) ? snakeColor : lightenColor(snakeColor, 20);
+                ctx.shadowBlur = (i == 0) ? 12 : 4;
+                ctx.shadowColor = snakeColor;
+                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                ctx.strokeStyle = "#020b04";
+                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+            }
+
+            // Draw Fruit
+            let currentFruit = fruitTypes[currentFruitIndex];
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = currentFruit.color;
+            ctx.font = "13px Arial";
+            ctx.fillText(currentFruit.icon, food.x, food.y + 12);
+
+            // Reset Shadow
+            ctx.shadowBlur = 0;
+
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
+
+            if (d == "LEFT") snakeX -= box;
+            if (d == "UP") snakeY -= box;
+            if (d == "RIGHT") snakeX += box;
+            if (d == "DOWN") snakeY += box;
+
+            // Snake Eats Fruit
+            if (snakeX == food.x && snakeY == food.y) {
+                playEatSound(); // 🔊 TUI-TUI SOUND EFFECT!
+                score++;
+                fruitEatenCount++;
+                snakeColor = currentFruit.color; // Color Changes to Fruit Color!
+
+                if (fruitEatenCount >= 5) {
+                    fruitEatenCount = 0;
+                    currentFruitIndex = (currentFruitIndex + 1) % fruitTypes.length;
+                }
+
+                document.getElementById("score").innerText = score;
+                document.getElementById("fruit-count").innerText = fruitEatenCount;
+
+                food = {
+                    x: Math.floor(Math.random() * 19 + 1) * box,
+                    y: Math.floor(Math.random() * 19 + 1) * box
+                };
+            } else {
+                snake.pop();
+            }
+
+            let newHead = { x: snakeX, y: snakeY };
+
+            // Game Over Conditions
+            if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
+                clearInterval(game);
+                alert("गेम ओवर आलोक भाई! आपका स्कोर था: " + score);
+                location.reload();
+            }
+
+            snake.unshift(newHead);
+        }
+
+        function collision(head, array) {
+            for (let i = 0; i < array.length; i++) {
+                if (head.x == array[i].x && head.y == array[i].y) return true;
+            }
+            return false;
+        }
+
+        function lightenColor(color, percent) {
+            return color; 
+        }
+
+        let game = setInterval(draw, 110);
+    </script>
+</body>
+</html>
