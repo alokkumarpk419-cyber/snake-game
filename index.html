@@ -1,247 +1,2523 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Fruit Snake Game</title>
-    <style>
-        body {
-            background-color: #051408;
-            color: #39ff14;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-        h1 {
-            margin: 5px 0;
-            font-size: 24px;
-            text-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
-        }
-        #stats {
-            font-size: 16px;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #ffffff;
-            text-shadow: 0 0 5px #00ffcc;
-        }
-        canvas {
-            border: 3px solid #39ff14;
-            background-color: #020b04;
-            border-radius: 12px;
-            box-shadow: 0 0 25px rgba(57, 255, 20, 0.6);
-        }
-        .controls {
-            margin-top: 15px;
-            display: grid;
-            grid-template-columns: repeat(3, 65px);
-            grid-template-rows: repeat(2, 60px);
-            grid-gap: 10px;
-            justify-content: center;
-        }
-        .btn {
-            width: 65px;
-            height: 55px;
-            background: rgba(10, 40, 15, 0.8);
-            border: 2px solid #39ff14;
-            color: #39ff14;
-            font-size: 24px;
-            font-weight: bold;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
-            touch-action: manipulation;
-        }
-        .btn:active {
-            background: #39ff14;
-            color: #000;
-            box-shadow: 0 0 20px #39ff14;
-        }
-        .up { grid-column: 2; grid-row: 1; }
-        .left { grid-column: 1; grid-row: 2; }
-        .down { grid-column: 2; grid-row: 2; }
-        .right { grid-column: 3; grid-row: 2; }
-    </style>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1,
+               maximum-scale=1,
+               user-scalable=no">
+
+<title>Snake Game</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: #000;
+    color: #39ff14;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.game-wrapper {
+    width: 100%;
+    max-width: 520px;
+    min-height: 100vh;
+
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 14px;
+}
+
+.title {
+    color: #39ff14;
+    font-size: clamp(27px, 8vw, 42px);
+    font-weight: 900;
+    margin-top: 5px;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.info {
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.7;
+}
+
+.info span {
+    color: #39ff14;
+}
+
+.top-buttons {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.top-btn {
+    background: #000;
+    border: 2px solid #39ff14;
+    color: #39ff14;
+    padding: 7px 13px;
+    border-radius: 9px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.top-btn:active {
+    background: #39ff14;
+    color: #000;
+}
+
+.game-board {
+    position: relative;
+
+    width: min(90vw, 470px);
+    height: min(90vw, 470px);
+
+    border: 4px solid #39ff14;
+    border-radius: 18px;
+
+    background: #000;
+
+    box-shadow: none;
+
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.controls {
+    margin-top: 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.control-row {
+    display: flex;
+    gap: 9px;
+}
+
+.btn {
+    width: 75px;
+    height: 56px;
+
+    background: #000;
+
+    border: 3px solid #39ff14;
+    border-radius: 14px;
+
+    color: #39ff14;
+
+    font-size: 26px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.btn:active {
+    background: #39ff14;
+    color: #000;
+
+    transform: scale(.94);
+}
+
+.down {
+    transform: translateY(5px);
+}
+
+.down:active {
+    transform: translateY(5px) scale(.94);
+}
+
+.restart {
+    margin-top: 9px;
+
+    padding: 8px 20px;
+
+    background: #000;
+    color: #39ff14;
+
+    border: 2px solid #39ff14;
+    border-radius: 9px;
+
+    font-weight: bold;
+}
+
+.popup {
+    position: absolute;
+
+    inset: 0;
+
+    background: rgba(0,0,0,.92);
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.popup.show {
+    display: flex;
+}
+
+.popup-box {
+    width: 85%;
+    max-width: 330px;
+
+    border: 3px solid #39ff14;
+    border-radius: 16px;
+
+    padding: 22px;
+
+    background: #000;
+}
+
+.popup-box h2 {
+    color: #39ff14;
+    font-size: 31px;
+    margin-bottom: 10px;
+}
+
+.popup-box p {
+    color: white;
+    line-height: 1.8;
+}
+
+.popup-button {
+    margin-top: 15px;
+
+    padding: 10px 25px;
+
+    background: #39ff14;
+    color: #000;
+
+    border: 0;
+    border-radius: 8px;
+
+    font-weight: bold;
+}
+
+.face-panel {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,.95);
+
+    z-index: 50;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.face-panel.show {
+    display: flex;
+}
+
+.face-box {
+    width: 92%;
+    max-width: 440px;
+
+    border: 2px solid #39ff14;
+    border-radius: 15px;
+
+    background: #000;
+
+    padding: 15px;
+}
+
+.face-box h2 {
+    text-align: center;
+    color: #39ff14;
+    margin-bottom: 13px;
+}
+
+.faces {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.face {
+    height: 55px;
+
+    background: #000;
+
+    border: 2px solid #39ff14;
+    border-radius: 9px;
+
+    color: white;
+
+    font-size: 24px;
+
+    cursor: pointer;
+}
+
+.face.selected {
+    background: #39ff14;
+    color: #000;
+}
+
+.close-face {
+    display: block;
+
+    margin: 15px auto 0;
+
+    padding: 8px 22px;
+
+    background: #000;
+
+    border: 2px solid #39ff14;
+    border-radius: 8px;
+
+    color: #39ff14;
+}
+
+@media(max-height:700px) {
+
+    .game-wrapper {
+        padding-top: 4px;
+    }
+
+    .title {
+        font-size: 27px;
+    }
+
+    .game-board {
+        width: min(80vw, 390px);
+        height: min(80vw, 390px);
+    }
+
+    .btn {
+        width: 65px;
+        height: 48px;
+    }
+
+}
+
+</style>
 </head>
+
 <body>
 
-    <h1>🐍 SNAKE GAME 🍎</h1>
-    <div id="stats">
-        स्कोर: <span id="score">0</span> | खाए गए फल: <span id="fruit-count">0</span>/5
+<div class="game-wrapper">
+
+    <div class="title">
+        🐍 SNAKE GAME 🍎
     </div>
-    
-    <canvas id="gameCanvas" width="300" height="300"></canvas>
+
+    <div class="info">
+
+        Score:
+        <span id="score">0</span>
+
+        &nbsp; | &nbsp;
+
+        Fruits:
+        <span id="fruitCount">0/10</span>
+
+        &nbsp; | &nbsp;
+
+        Level:
+        <span id="level">1</span>
+
+        <br>
+
+        🏆 Reward:
+        <span id="reward">None</span>
+
+    </div>
+
+
+    <!-- TOP BUTTONS -->
+
+    <div class="top-buttons">
+
+        <button class="top-btn"
+                id="fruitButton">
+
+            🍎 10 FRUITS
+
+        </button>
+
+        <button class="top-btn"
+                id="faceButton">
+
+            🎭 FACE
+
+        </button>
+
+    </div>
+
+
+    <!-- GAME -->
+
+    <div class="game-board">
+
+        <canvas id="gameCanvas"></canvas>
+
+
+        <div class="popup" id="gameOver">
+
+            <div class="popup-box">
+
+                <h2>GAME OVER</h2>
+
+                <p>
+
+                    Score:
+                    <strong id="finalScore">
+                        0
+                    </strong>
+
+                    <br>
+
+                    Level:
+                    <strong id="finalLevel">
+                        1
+                    </strong>
+
+                    <br>
+
+                    Reward:
+                    <strong id="finalReward">
+                        None
+                    </strong>
+
+                </p>
+
+                <button
+                    class="popup-button"
+                    id="popupRestart">
+
+                    PLAY AGAIN
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONTROLS -->
 
     <div class="controls">
-        <div class="btn up" onclick="changeDir('UP')">▲</div>
-        <div class="btn left" onclick="changeDir('LEFT')">◄</div>
-        <div class="btn down" onclick="changeDir('DOWN')">▼</div>
-        <div class="btn right" onclick="changeDir('RIGHT')">►</div>
+
+        <div class="control-row">
+
+            <button class="btn"
+                    data-direction="up">
+
+                ▲
+
+            </button>
+
+        </div>
+
+
+        <div class="control-row">
+
+            <button class="btn"
+                    data-direction="left">
+
+                ◀
+
+            </button>
+
+
+            <button class="btn down"
+                    data-direction="down">
+
+                ▼
+
+            </button>
+
+
+            <button class="btn"
+                    data-direction="right">
+
+                ▶
+
+            </button>
+
+        </div>
+
     </div>
 
-    <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-        const box = 15;
 
-        // Audio Context for Tui-Tui Sound Creation
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    <button class="restart"
+            id="restart">
 
-        function playEatSound() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            osc.type = 'sine';
-            // Sound Frequency Jump for Tui-Tui effect
-            osc.frequency.setValueAtTime(400, audioCtx.currentTime); 
-            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1); 
+        ↻ Restart
 
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    </button>
 
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+</div>
 
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
+
+<!-- FACE SELECTOR -->
+
+<div class="face-panel"
+     id="facePanel">
+
+    <div class="face-box">
+
+        <h2>
+            🐍 Choose Snake Face
+        </h2>
+
+        <div class="faces">
+
+            <button class="face selected"
+                    data-face="0">
+                😐
+            </button>
+
+            <button class="face"
+                    data-face="1">
+                🙂
+            </button>
+
+            <button class="face"
+                    data-face="2">
+                😎
+            </button>
+
+            <button class="face"
+                    data-face="3">
+                😈
+            </button>
+
+            <button class="face"
+                    data-face="4">
+                😡
+            </button>
+
+            <button class="face"
+                    data-face="5">
+                👿
+            </button>
+
+            <button class="face"
+                    data-face="6">
+                🤪
+            </button>
+
+            <button class="face"
+                    data-face="7">
+                😱
+            </button>
+
+            <button class="face"
+                    data-face="8">
+                🥶
+            </button>
+
+            <button class="face"
+                    data-face="9">
+                🐍
+            </button>
+
+        </div>
+
+        <button class="close-face"
+                id="closeFace">
+
+            CLOSE
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   BASIC SETUP
+===================================================== */
+
+const canvas =
+    document.getElementById("gameCanvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+
+let gridSize = 20;
+
+let tileSize;
+
+let snake = [];
+
+let fruits = [];
+
+let obstacles = [];
+
+let direction = {
+    x: 1,
+    y: 0
+};
+
+let nextDirection = {
+    x: 1,
+    y: 0
+};
+
+let score = 0;
+
+let fruitCount = 0;
+
+let level = 1;
+
+let gameRunning = true;
+
+let lastMove = 0;
+
+let moveSpeed = 145;
+
+
+/* =====================================================
+   FACE
+===================================================== */
+
+let selectedFace = 0;
+
+
+/* =====================================================
+   TONGUE ANIMATION
+===================================================== */
+
+let tongueVisible = false;
+
+let tongueTimer = 0;
+
+
+/* =====================================================
+   AUDIO
+===================================================== */
+
+let audioContext = null;
+
+
+function initAudio() {
+
+    if (!audioContext) {
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+    if (
+        audioContext.state ===
+        "suspended"
+    ) {
+
+        audioContext.resume();
+
+    }
+
+}
+
+
+/* -------------------------------
+   Generic sound
+-------------------------------- */
+
+function playTone(
+    frequency,
+    duration,
+    type = "square",
+    volume = 0.06
+) {
+
+    initAudio();
+
+    const oscillator =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+
+    oscillator.type = type;
+
+    oscillator.frequency.value =
+        frequency;
+
+
+    gain.gain.setValueAtTime(
+        volume,
+        audioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioContext.currentTime +
+        duration
+    );
+
+
+    oscillator.connect(gain);
+
+    gain.connect(
+        audioContext.destination
+    );
+
+
+    oscillator.start();
+
+    oscillator.stop(
+        audioContext.currentTime +
+        duration
+    );
+
+}
+
+
+/* =====================================================
+   FRUIT SOUND
+   TING-TING
+===================================================== */
+
+function fruitSound() {
+
+    playTone(
+        900,
+        .09,
+        "square",
+        .06
+    );
+
+    setTimeout(() => {
+
+        playTone(
+            1300,
+            .11,
+            "square",
+            .05
+        );
+
+    }, 90);
+
+}
+
+
+/* =====================================================
+   COLLISION SOUND
+   THAK-THAK
+===================================================== */
+
+function collisionSound() {
+
+    playTone(
+        110,
+        .14,
+        "sawtooth",
+        .08
+    );
+
+    setTimeout(() => {
+
+        playTone(
+            75,
+            .18,
+            "sawtooth",
+            .08
+        );
+
+    }, 130);
+
+}
+
+
+/* =====================================================
+   TRONG SOUND
+===================================================== */
+
+function trongSound() {
+
+    playTone(
+        220,
+        .15,
+        "triangle",
+        .07
+    );
+
+    setTimeout(() => {
+
+        playTone(
+            440,
+            .18,
+            "triangle",
+            .06
+        );
+
+    }, 100);
+
+}
+
+
+/* =====================================================
+   RESIZE
+===================================================== */
+
+function resizeCanvas() {
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+    canvas.width =
+        rect.width;
+
+    canvas.height =
+        rect.height;
+
+    tileSize =
+        canvas.width /
+        gridSize;
+
+    draw();
+
+}
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+
+/* =====================================================
+   START
+===================================================== */
+
+function startGame() {
+
+    snake = [
+
+        {
+            x: 10,
+            y: 10
+        },
+
+        {
+            x: 9,
+            y: 10
+        },
+
+        {
+            x: 8,
+            y: 10
+        },
+
+        {
+            x: 7,
+            y: 10
         }
 
-        // 10 Fruits with unique colors
-        const fruitTypes = [
-            { name: "एप्पल 🍎", icon: "🍎", color: "#ff2a2a" },
-            { name: "बनाना 🍌", icon: "🍌", color: "#ffe600" },
-            { name: "ग्रेप्स 🍇", icon: "🍇", color: "#b02aff" },
-            { name: "ऑरेंज 🍊", icon: "🍊", color: "#ff8c00" },
-            { name: "स्ट्रॉबेरी 🍓", icon: "🍓", color: "#ff0055" },
-            { name: "वॉटरमेलन 🍉", icon: "🍉", color: "#2aff75" },
-            { name: "पाइनएप्पल 🍍", icon: "🍍", color: "#ffd700" },
-            { name: "किवी 🥝", icon: "🥝", color: "#8bcf00" },
-            { name: "ब्लूबेरी 🫐", icon: "🫐", color: "#3862ff" },
-            { name: "पीच 🍑", icon: "🍑", color: "#ffaa75" }
-        ];
+    ];
 
-        let currentFruitIndex = 0;
-        let fruitEatenCount = 0;
-        let score = 0;
-        let snakeColor = "#39ff14"; // Default Neon Green
 
-        let snake = [{ x: 9 * box, y: 10 * box }];
-        let food = {
-            x: Math.floor(Math.random() * 19 + 1) * box,
-            y: Math.floor(Math.random() * 19 + 1) * box
+    direction = {
+        x: 1,
+        y: 0
+    };
+
+
+    nextDirection = {
+        x: 1,
+        y: 0
+    };
+
+
+    score = 0;
+
+    fruitCount = 0;
+
+    level = 1;
+
+    moveSpeed = 145;
+
+    obstacles = [];
+
+    gameRunning = true;
+
+    lastMove = 0;
+
+    document
+        .getElementById("gameOver")
+        .classList
+        .remove("show");
+
+
+    createObstacles();
+
+    createTenFruits();
+
+    updateInfo();
+
+    draw();
+
+}
+
+
+/* =====================================================
+   CREATE 10 FRUITS
+===================================================== */
+
+function createTenFruits() {
+
+    fruits = [];
+
+
+    for (
+        let i = 0;
+        i < 10;
+        i++
+    ) {
+
+        createOneFruit();
+
+    }
+
+}
+
+
+/* =====================================================
+   CREATE ONE FRUIT
+===================================================== */
+
+function createOneFruit() {
+
+    let fruit;
+
+    let valid = false;
+
+
+    while (!valid) {
+
+        fruit = {
+
+            x:
+                Math.floor(
+                    Math.random() *
+                    gridSize
+                ),
+
+            y:
+                Math.floor(
+                    Math.random() *
+                    gridSize
+                ),
+
+            type:
+                Math.floor(
+                    Math.random() * 5
+                )
+
         };
 
-        let d;
 
-        document.addEventListener("keydown", direction);
+        const onSnake =
+            snake.some(
+                part =>
+                    part.x === fruit.x &&
+                    part.y === fruit.y
+            );
 
-        function direction(event) {
-            if (event.keyCode == 37 && d != "RIGHT") d = "LEFT";
-            else if (event.keyCode == 38 && d != "DOWN") d = "UP";
-            else if (event.keyCode == 39 && d != "LEFT") d = "RIGHT";
-            else if (event.keyCode == 40 && d != "UP") d = "DOWN";
+
+        const onObstacle =
+            obstacles.some(
+                block =>
+                    block.x === fruit.x &&
+                    block.y === fruit.y
+            );
+
+
+        const onFruit =
+            fruits.some(
+                item =>
+                    item.x === fruit.x &&
+                    item.y === fruit.y
+            );
+
+
+        valid =
+            !onSnake &&
+            !onObstacle &&
+            !onFruit;
+
+    }
+
+
+    fruits.push(fruit);
+
+}
+
+
+/* =====================================================
+   TOP FRUIT BUTTON
+===================================================== */
+
+document
+    .getElementById("fruitButton")
+    .addEventListener(
+        "click",
+        function() {
+
+            initAudio();
+
+            createTenFruits();
+
+            fruitCount = 0;
+
+            updateInfo();
+
+            trongSound();
+
+        }
+    );
+
+
+/* =====================================================
+   OBSTACLES
+===================================================== */
+
+function createObstacles() {
+
+    obstacles = [];
+
+
+    const count =
+        Math.min(
+            18,
+            Math.max(
+                0,
+                (level - 1) * 2
+            )
+        );
+
+
+    for (
+        let i = 0;
+        i < count;
+        i++
+    ) {
+
+        let block;
+
+        let valid = false;
+
+
+        while (!valid) {
+
+            block = {
+
+                x:
+                    Math.floor(
+                        Math.random() *
+                        gridSize
+                    ),
+
+                y:
+                    Math.floor(
+                        Math.random() *
+                        gridSize
+                    )
+
+            };
+
+
+            const snakeArea =
+                block.x >= 6 &&
+                block.x <= 13 &&
+                block.y >= 7 &&
+                block.y <= 13;
+
+
+            const duplicate =
+                obstacles.some(
+                    item =>
+                        item.x === block.x &&
+                        item.y === block.y
+                );
+
+
+            valid =
+                !snakeArea &&
+                !duplicate;
+
         }
 
-        function changeDir(dir) {
-            if (dir == "LEFT" && d != "RIGHT") d = "LEFT";
-            if (dir == "UP" && d != "DOWN") d = "UP";
-            if (dir == "RIGHT" && d != "LEFT") d = "RIGHT";
-            if (dir == "DOWN" && d != "UP") d = "DOWN";
+
+        obstacles.push(block);
+
+    }
+
+}
+
+
+/* =====================================================
+   DIRECTION
+===================================================== */
+
+function changeDirection(newDirection) {
+
+    if (!gameRunning) return;
+
+
+    if (
+        newDirection.x ===
+        -direction.x &&
+
+        newDirection.y ===
+        -direction.y
+    ) {
+
+        return;
+
+    }
+
+
+    nextDirection =
+        newDirection;
+
+}
+
+
+/* =====================================================
+   KEYBOARD
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key ===
+            "ArrowUp"
+        ) {
+
+            changeDirection({
+                x: 0,
+                y: -1
+            });
+
         }
 
-        function draw() {
-            // Draw Glowing Dark Canvas Background
-            ctx.fillStyle = "#020b04";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (
+            event.key ===
+            "ArrowDown"
+        ) {
 
-            // Draw Snake
-            for (let i = 0; i < snake.length; i++) {
-                ctx.fillStyle = (i == 0) ? snakeColor : lightenColor(snakeColor, 20);
-                ctx.shadowBlur = (i == 0) ? 12 : 4;
-                ctx.shadowColor = snakeColor;
-                ctx.fillRect(snake[i].x, snake[i].y, box, box);
-                ctx.strokeStyle = "#020b04";
-                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
-            }
+            changeDirection({
+                x: 0,
+                y: 1
+            });
 
-            // Draw Fruit
-            let currentFruit = fruitTypes[currentFruitIndex];
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = currentFruit.color;
-            ctx.font = "13px Arial";
-            ctx.fillText(currentFruit.icon, food.x, food.y + 12);
+        }
 
-            // Reset Shadow
-            ctx.shadowBlur = 0;
+        if (
+            event.key ===
+            "ArrowLeft"
+        ) {
 
-            let snakeX = snake[0].x;
-            let snakeY = snake[0].y;
+            changeDirection({
+                x: -1,
+                y: 0
+            });
 
-            if (d == "LEFT") snakeX -= box;
-            if (d == "UP") snakeY -= box;
-            if (d == "RIGHT") snakeX += box;
-            if (d == "DOWN") snakeY += box;
+        }
 
-            // Snake Eats Fruit
-            if (snakeX == food.x && snakeY == food.y) {
-                playEatSound(); // 🔊 TUI-TUI SOUND EFFECT!
-                score++;
-                fruitEatenCount++;
-                snakeColor = currentFruit.color; // Color Changes to Fruit Color!
+        if (
+            event.key ===
+            "ArrowRight"
+        ) {
 
-                if (fruitEatenCount >= 5) {
-                    fruitEatenCount = 0;
-                    currentFruitIndex = (currentFruitIndex + 1) % fruitTypes.length;
+            changeDirection({
+                x: 1,
+                y: 0
+            });
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   MOBILE BUTTONS
+===================================================== */
+
+document
+    .querySelectorAll(".btn")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const d =
+                    button.dataset.direction;
+
+
+                if (d === "up") {
+
+                    changeDirection({
+                        x: 0,
+                        y: -1
+                    });
+
                 }
 
-                document.getElementById("score").innerText = score;
-                document.getElementById("fruit-count").innerText = fruitEatenCount;
 
-                food = {
-                    x: Math.floor(Math.random() * 19 + 1) * box,
-                    y: Math.floor(Math.random() * 19 + 1) * box
-                };
-            } else {
-                snake.pop();
+                if (d === "down") {
+
+                    changeDirection({
+                        x: 0,
+                        y: 1
+                    });
+
+                }
+
+
+                if (d === "left") {
+
+                    changeDirection({
+                        x: -1,
+                        y: 0
+                    });
+
+                }
+
+
+                if (d === "right") {
+
+                    changeDirection({
+                        x: 1,
+                        y: 0
+                    });
+
+                }
+
             }
+        );
 
-            let newHead = { x: snakeX, y: snakeY };
+    });
 
-            // Game Over Conditions
-            if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
-                clearInterval(game);
-                alert("गेम ओवर आलोक भाई! आपका स्कोर था: " + score);
-                location.reload();
-            }
 
-            snake.unshift(newHead);
+/* =====================================================
+   UPDATE
+===================================================== */
+
+function update() {
+
+    if (!gameRunning)
+        return;
+
+
+    direction =
+        nextDirection;
+
+
+    const head = {
+
+        x:
+            snake[0].x +
+            direction.x,
+
+        y:
+            snake[0].y +
+            direction.y
+
+    };
+
+
+    /* WALL */
+
+    if (
+        head.x < 0 ||
+        head.x >= gridSize ||
+        head.y < 0 ||
+        head.y >= gridSize
+    ) {
+
+        endGame();
+
+        return;
+
+    }
+
+
+    /* BODY */
+
+    const hitBody =
+        snake.some(
+            part =>
+                part.x === head.x &&
+                part.y === head.y
+        );
+
+
+    if (hitBody) {
+
+        endGame();
+
+        return;
+
+    }
+
+
+    /* OBSTACLE */
+
+    const hitObstacle =
+        obstacles.some(
+            block =>
+                block.x === head.x &&
+                block.y === head.y
+        );
+
+
+    if (hitObstacle) {
+
+        endGame();
+
+        return;
+
+    }
+
+
+    snake.unshift(head);
+
+
+    /* FRUIT */
+
+    const fruitIndex =
+        fruits.findIndex(
+            fruit =>
+                fruit.x === head.x &&
+                fruit.y === head.y
+        );
+
+
+    if (fruitIndex !== -1) {
+
+        fruits.splice(
+            fruitIndex,
+            1
+        );
+
+
+        score += 10;
+
+        fruitCount++;
+
+
+        fruitSound();
+
+
+        /* Reward */
+
+        updateReward();
+
+
+        /*
+           अगर 10 fruits खत्म
+           हो गए तो नया batch
+        */
+
+        if (fruits.length === 0) {
+
+            createTenFruits();
+
+            fruitCount = 0;
+
+            trongSound();
+
         }
 
-        function collision(head, array) {
-            for (let i = 0; i < array.length; i++) {
-                if (head.x == array[i].x && head.y == array[i].y) return true;
+
+        /* Level */
+
+        const newLevel =
+            Math.floor(
+                score / 50
+            ) + 1;
+
+
+        if (
+            newLevel !== level
+        ) {
+
+            level =
+                newLevel;
+
+
+            moveSpeed =
+                Math.max(
+                    85,
+                    145 -
+                    ((level - 1) * 8)
+                );
+
+
+            createObstacles();
+
+            trongSound();
+
+        }
+
+    }
+
+    else {
+
+        snake.pop();
+
+    }
+
+
+    updateInfo();
+
+}
+
+
+/* =====================================================
+   REWARD SYSTEM
+===================================================== */
+
+function getReward() {
+
+    if (score >= 500)
+        return "👑 Golden Crown";
+
+    if (score >= 300)
+        return "🏆 Champion";
+
+    if (score >= 200)
+        return "🥇 Gold";
+
+    if (score >= 100)
+        return "🥈 Silver";
+
+    if (score >= 50)
+        return "🥉 Bronze";
+
+    return "None";
+
+}
+
+
+function updateReward() {
+
+    document
+        .getElementById("reward")
+        .textContent =
+        getReward();
+
+}
+
+
+/* =====================================================
+   INFO
+===================================================== */
+
+function updateInfo() {
+
+    document
+        .getElementById("score")
+        .textContent =
+        score;
+
+
+    document
+        .getElementById("fruitCount")
+        .textContent =
+        fruitCount + "/10";
+
+
+    document
+        .getElementById("level")
+        .textContent =
+        level;
+
+
+    document
+        .getElementById("reward")
+        .textContent =
+        getReward();
+
+}
+
+
+/* =====================================================
+   DRAW
+===================================================== */
+
+function draw() {
+
+    if (!tileSize)
+        return;
+
+
+    ctx.fillStyle =
+        "#000";
+
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    obstacles.forEach(
+        drawObstacle
+    );
+
+
+    fruits.forEach(
+        drawFruit
+    );
+
+
+    snake.forEach(
+        (part, index) =>
+            drawSnake(
+                part,
+                index
+            )
+    );
+
+}
+
+
+/* =====================================================
+   OBSTACLE DRAW
+===================================================== */
+
+function drawObstacle(block) {
+
+    const x =
+        block.x * tileSize + 2;
+
+    const y =
+        block.y * tileSize + 2;
+
+    const size =
+        tileSize - 4;
+
+
+    ctx.fillStyle =
+        "#125c12";
+
+
+    ctx.fillRect(
+        x,
+        y,
+        size,
+        size
+    );
+
+
+    ctx.strokeStyle =
+        "#39ff14";
+
+
+    ctx.lineWidth = 2;
+
+
+    ctx.strokeRect(
+        x,
+        y,
+        size,
+        size
+    );
+
+}
+
+
+/* =====================================================
+   FRUIT DRAW
+===================================================== */
+
+function drawFruit(fruit) {
+
+    const x =
+        fruit.x * tileSize +
+        tileSize / 2;
+
+    const y =
+        fruit.y * tileSize +
+        tileSize / 2;
+
+
+    const fruitTypes = [
+        "🍎",
+        "🍊",
+        "🍓",
+        "🍇",
+        "🍉"
+    ];
+
+
+    ctx.font =
+        `${tileSize * .72}px Arial`;
+
+    ctx.textAlign =
+        "center";
+
+    ctx.textBaseline =
+        "middle";
+
+
+    ctx.fillText(
+        fruitTypes[fruit.type],
+        x,
+        y
+    );
+
+}
+
+
+/* =====================================================
+   SNAKE DRAW
+===================================================== */
+
+function drawSnake(
+    part,
+    index
+) {
+
+    const padding = 1;
+
+    const x =
+        part.x * tileSize +
+        padding;
+
+    const y =
+        part.y * tileSize +
+        padding;
+
+    const size =
+        tileSize -
+        padding * 2;
+
+
+    if (index === 0) {
+
+        ctx.fillStyle =
+            "#39ff14";
+
+
+        ctx.fillRect(
+            x,
+            y,
+            size,
+            size
+        );
+
+
+        drawFace(
+            x,
+            y,
+            size
+        );
+
+    }
+
+    else {
+
+        ctx.fillStyle =
+            index % 2 === 0
+                ? "#28d915"
+                : "#159b0b";
+
+
+        ctx.fillRect(
+            x,
+            y,
+            size,
+            size
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SNAKE FACE
+===================================================== */
+
+function drawFace(
+    x,
+    y,
+    size
+) {
+
+    ctx.save();
+
+    ctx.translate(
+        x,
+        y
+    );
+
+
+    /*
+       Direction के अनुसार
+       पूरा face rotate
+    */
+
+    if (direction.x === -1) {
+
+        ctx.translate(
+            size,
+            0
+        );
+
+        ctx.scale(
+            -1,
+            1
+        );
+
+    }
+
+    else if (
+        direction.y === -1
+    ) {
+
+        ctx.translate(
+            0,
+            size
+        );
+
+        ctx.rotate(
+            -Math.PI / 2
+        );
+
+    }
+
+    else if (
+        direction.y === 1
+    ) {
+
+        ctx.translate(
+            size,
+            0
+        );
+
+        ctx.rotate(
+            Math.PI / 2
+        );
+
+    }
+
+
+    /* =================================================
+       BLACK EYES
+    ================================================= */
+
+    ctx.fillStyle =
+        "#000";
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+        size * .32,
+        size * .35,
+        size * .085,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+        size * .68,
+        size * .35,
+        size * .085,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+
+    /* =================================================
+       DIFFERENT FACES
+    ================================================= */
+
+    ctx.strokeStyle =
+        "#000";
+
+    ctx.lineWidth =
+        Math.max(
+            2,
+            size * .06
+        );
+
+
+    /*
+       Face 0
+       Normal
+    */
+
+    if (selectedFace === 0) {
+
+        drawMouth(
+            size,
+            "normal"
+        );
+
+    }
+
+
+    /*
+       Face 1
+       Cute
+    */
+
+    else if (
+        selectedFace === 1
+    ) {
+
+        drawMouth(
+            size,
+            "smile"
+        );
+
+    }
+
+
+    /*
+       Face 2
+       Cool
+    */
+
+    else if (
+        selectedFace === 2
+    ) {
+
+        drawMouth(
+            size,
+            "cool"
+        );
+
+    }
+
+
+    /*
+       Face 3
+       Evil
+    */
+
+    else if (
+        selectedFace === 3
+    ) {
+
+        drawAngry(
+            size,
+            1
+        );
+
+    }
+
+
+    /*
+       Face 4
+       Angry
+    */
+
+    else if (
+        selectedFace === 4
+    ) {
+
+        drawAngry(
+            size,
+            1.3
+        );
+
+    }
+
+
+    /*
+       Face 5
+       VERY DANGER
+    */
+
+    else if (
+        selectedFace === 5
+    ) {
+
+        drawAngry(
+            size,
+            2
+        );
+
+    }
+
+
+    /*
+       Face 6
+       Crazy
+    */
+
+    else if (
+        selectedFace === 6
+    ) {
+
+        drawMouth(
+            size,
+            "crazy"
+        );
+
+    }
+
+
+    /*
+       Face 7
+       Scared
+    */
+
+    else if (
+        selectedFace === 7
+    ) {
+
+        drawMouth(
+            size,
+            "scared"
+        );
+
+    }
+
+
+    /*
+       Face 8
+       Frozen
+    */
+
+    else if (
+        selectedFace === 8
+    ) {
+
+        drawMouth(
+            size,
+            "frozen"
+        );
+
+    }
+
+
+    /*
+       Face 9
+       Snake
+    */
+
+    else {
+
+        drawMouth(
+            size,
+            "snake"
+        );
+
+    }
+
+
+    /* =================================================
+       MOVING TONGUE
+    ================================================= */
+
+    drawTongue(
+        size
+    );
+
+
+    ctx.restore();
+
+}
+
+
+/* =====================================================
+   MOUTH
+===================================================== */
+
+function drawMouth(
+    size,
+    type
+) {
+
+    ctx.beginPath();
+
+
+    if (type === "smile") {
+
+        ctx.arc(
+            size / 2,
+            size * .55,
+            size * .17,
+            0,
+            Math.PI
+        );
+
+        ctx.stroke();
+
+    }
+
+    else if (
+        type === "cool"
+    ) {
+
+        ctx.moveTo(
+            size * .28,
+            size * .65
+        );
+
+        ctx.lineTo(
+            size * .72,
+            size * .65
+        );
+
+        ctx.stroke();
+
+    }
+
+    else if (
+        type === "crazy"
+    ) {
+
+        ctx.moveTo(
+            size * .25,
+            size * .60
+        );
+
+        ctx.lineTo(
+            size * .50,
+            size * .72
+        );
+
+        ctx.lineTo(
+            size * .75,
+            size * .60
+        );
+
+        ctx.stroke();
+
+    }
+
+    else if (
+        type === "scared"
+    ) {
+
+        ctx.arc(
+            size / 2,
+            size * .65,
+            size * .10,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.stroke();
+
+    }
+
+    else if (
+        type === "frozen"
+    ) {
+
+        ctx.moveTo(
+            size * .32,
+            size * .65
+        );
+
+        ctx.lineTo(
+            size * .68,
+            size * .65
+        );
+
+        ctx.stroke();
+
+    }
+
+    else if (
+        type === "snake"
+    ) {
+
+        ctx.moveTo(
+            size * .25,
+            size * .64
+        );
+
+        ctx.lineTo(
+            size * .75,
+            size * .64
+        );
+
+        ctx.stroke();
+
+    }
+
+    else {
+
+        ctx.moveTo(
+            size * .32,
+            size * .65
+        );
+
+        ctx.lineTo(
+            size * .68,
+            size * .65
+        );
+
+        ctx.stroke();
+
+    }
+
+}
+
+
+/* =====================================================
+   ANGRY FACE
+===================================================== */
+
+function drawAngry(
+    size,
+    power
+) {
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        size * .17,
+        size * .22
+    );
+
+    ctx.lineTo(
+        size * .45,
+        size * (
+            .30 + power * .02
+        )
+    );
+
+    ctx.stroke();
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        size * .55,
+        size * (
+            .30 + power * .02
+        )
+    );
+
+    ctx.lineTo(
+        size * .83,
+        size * .22
+    );
+
+    ctx.stroke();
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        size * .22,
+        size * .68
+    );
+
+    ctx.lineTo(
+        size * .78,
+        size * .68
+    );
+
+    ctx.stroke();
+
+
+    /*
+       Very dangerous face:
+       teeth
+    */
+
+    if (power >= 2) {
+
+        ctx.fillStyle =
+            "#fff";
+
+
+        for (
+            let i = 0;
+            i < 4;
+            i++
+        ) {
+
+            const tx =
+                size * (
+                    .29 +
+                    i * .14
+                );
+
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                tx,
+                size * .68
+            );
+
+            ctx.lineTo(
+                tx + size * .07,
+                size * .68
+            );
+
+            ctx.lineTo(
+                tx + size * .035,
+                size * .82
+            );
+
+            ctx.closePath();
+
+            ctx.fill();
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   TONGUE
+===================================================== */
+
+function drawTongue(size) {
+
+    if (!tongueVisible)
+        return;
+
+
+    ctx.strokeStyle =
+        "#ff3030";
+
+    ctx.lineWidth =
+        Math.max(
+            2,
+            size * .055
+        );
+
+
+    /*
+       Tongue बाहर
+    */
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        size * .50,
+        size * .65
+    );
+
+    ctx.lineTo(
+        size * .50,
+        size * .94
+    );
+
+    ctx.stroke();
+
+
+    /*
+       Tongue fork
+    */
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        size * .50,
+        size * .94
+    );
+
+    ctx.lineTo(
+        size * .42,
+        size
+    );
+
+    ctx.stroke();
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        size * .50,
+        size * .94
+    );
+
+    ctx.lineTo(
+        size * .58,
+        size
+    );
+
+    ctx.stroke();
+
+}
+
+
+/* =====================================================
+   TONGUE TIMER
+===================================================== */
+
+function animateTongue(time) {
+
+    if (
+        time - tongueTimer >
+        330
+    ) {
+
+        tongueVisible =
+            !tongueVisible;
+
+        tongueTimer =
+            time;
+
+    }
+
+}
+
+
+/* =====================================================
+   GAME OVER
+===================================================== */
+
+function endGame() {
+
+    gameRunning = false;
+
+    collisionSound();
+
+
+    document
+        .getElementById("finalScore")
+        .textContent =
+        score;
+
+
+    document
+        .getElementById("finalLevel")
+        .textContent =
+        level;
+
+
+    document
+        .getElementById("finalReward")
+        .textContent =
+        getReward();
+
+
+    setTimeout(() => {
+
+        document
+            .getElementById("gameOver")
+            .classList
+            .add("show");
+
+    }, 180);
+
+}
+
+
+/* =====================================================
+   RESTART
+===================================================== */
+
+function restartGame() {
+
+    initAudio();
+
+    startGame();
+
+}
+
+
+document
+    .getElementById("restart")
+    .addEventListener(
+        "click",
+        restartGame
+    );
+
+
+document
+    .getElementById("popupRestart")
+    .addEventListener(
+        "click",
+        restartGame
+    );
+
+
+/* =====================================================
+   FACE SELECTOR
+===================================================== */
+
+const facePanel =
+    document.getElementById(
+        "facePanel"
+    );
+
+
+document
+    .getElementById("faceButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            facePanel
+                .classList
+                .add("show");
+
+        }
+    );
+
+
+document
+    .getElementById("closeFace")
+    .addEventListener(
+        "click",
+        () => {
+
+            facePanel
+                .classList
+                .remove("show");
+
+        }
+    );
+
+
+document
+    .querySelectorAll(".face")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                selectedFace =
+                    Number(
+                        button.dataset.face
+                    );
+
+
+                document
+                    .querySelectorAll(
+                        ".face"
+                    )
+                    .forEach(
+                        b =>
+                            b.classList
+                             .remove(
+                                 "selected"
+                             )
+                    );
+
+
+                button
+                    .classList
+                    .add("selected");
+
+
+                facePanel
+                    .classList
+                    .remove("show");
+
             }
-            return false;
-        }
+        );
 
-        function lightenColor(color, percent) {
-            return color; 
-        }
+    });
 
-        let game = setInterval(draw, 110);
-    </script>
+
+/* =====================================================
+   MAIN GAME LOOP
+===================================================== */
+
+function gameLoop(time) {
+
+    animateTongue(time);
+
+
+    if (
+        gameRunning &&
+        time - lastMove >=
+        moveSpeed
+    ) {
+
+        update();
+
+        lastMove = time;
+
+    }
+
+
+    draw();
+
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+resizeCanvas();
+
+startGame();
+
+requestAnimationFrame(
+    gameLoop
+);
+
+</script>
+
 </body>
 </html>
