@@ -2,685 +2,510 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
-<meta name="viewport"
-      content="width=device-width,
-               initial-scale=1,
-               maximum-scale=1,
-               user-scalable=no">
-
-<title>Snake Game</title>
+<title>Snake World</title>
 
 <style>
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    -webkit-tap-highlight-color: transparent;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
 }
 
-body {
-    background: #000;
-    color: #39ff14;
-    font-family: Arial, sans-serif;
-    min-height: 100vh;
-    overflow: hidden;
+body{
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 15% 15%,#243b68 0,transparent 30%),
+        radial-gradient(circle at 85% 85%,#51295d 0,transparent 30%),
+        #080b12;
+    color:white;
+    font-family:Arial,sans-serif;
+    display:flex;
+    justify-content:center;
+    overflow-x:hidden;
 }
 
-.game-wrapper {
-    width: 100%;
-    max-width: 520px;
-    min-height: 100vh;
-
-    margin: auto;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    padding: 14px;
+.app{
+    width:100%;
+    max-width:620px;
+    padding:14px;
+    text-align:center;
 }
 
-.title {
-    color: #39ff14;
-    font-size: clamp(27px, 8vw, 42px);
-    font-weight: 900;
-    margin-top: 5px;
-    margin-bottom: 4px;
-    text-align: center;
+h1{
+    font-size:34px;
+    color:#ffd52b;
+    margin:4px 0;
 }
 
-.info {
-    color: white;
-    font-size: 17px;
-    font-weight: bold;
-    text-align: center;
-    line-height: 1.7;
+.sub{
+    color:#aeb8ca;
+    font-size:13px;
+    margin-bottom:10px;
 }
 
-.info span {
-    color: #39ff14;
+.stats{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-bottom:10px;
 }
 
-.top-buttons {
-    display: flex;
-    gap: 8px;
-    margin: 8px 0;
-    flex-wrap: wrap;
-    justify-content: center;
+.stat{
+    background:#171d2b;
+    border:1px solid #35435c;
+    padding:7px 11px;
+    border-radius:10px;
+    font-size:13px;
 }
 
-.top-btn {
-    background: #000;
-    border: 2px solid #39ff14;
-    color: #39ff14;
-    padding: 7px 13px;
-    border-radius: 9px;
-    font-weight: bold;
-    cursor: pointer;
+.stat b{
+    color:#ffd52b;
 }
 
-.top-btn:active {
-    background: #39ff14;
-    color: #000;
+.toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:7px;
+    margin-bottom:10px;
 }
 
-.game-board {
-    position: relative;
-
-    width: min(90vw, 470px);
-    height: min(90vw, 470px);
-
-    border: 4px solid #39ff14;
-    border-radius: 18px;
-
-    background: #000;
-
-    box-shadow: none;
-
-    overflow: hidden;
+button{
+    cursor:pointer;
+    user-select:none;
 }
 
-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
+.tool{
+    background:#172033;
+    color:white;
+    border:1px solid #4a5b78;
+    padding:9px 12px;
+    border-radius:10px;
+    font-weight:bold;
 }
 
-.controls {
-    margin-top: 12px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    gap: 8px;
+.tool:active,
+.control:active{
+    transform:scale(.94);
 }
 
-.control-row {
-    display: flex;
-    gap: 9px;
+/* ONLY THIS AREA IS GREEN */
+.game{
+    position:relative;
+    width:min(92vw,500px);
+    height:min(92vw,500px);
+    margin:auto;
+    background:#138a2e;
+    border:5px solid #65ff76;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 0 25px rgba(0,255,70,.18);
 }
 
-.btn {
-    width: 75px;
-    height: 56px;
-
-    background: #000;
-
-    border: 3px solid #39ff14;
-    border-radius: 14px;
-
-    color: #39ff14;
-
-    font-size: 26px;
-    font-weight: bold;
-
-    cursor: pointer;
+canvas{
+    width:100%;
+    height:100%;
+    display:block;
 }
 
-.btn:active {
-    background: #39ff14;
-    color: #000;
-
-    transform: scale(.94);
+.controls{
+    margin:12px auto 0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:7px;
 }
 
-.down {
-    transform: translateY(5px);
+.row{
+    display:flex;
+    gap:7px;
 }
 
-.down:active {
-    transform: translateY(5px) scale(.94);
+.control{
+    width:66px;
+    height:52px;
+    border-radius:14px;
+    background:#202a3e;
+    color:white;
+    border:2px solid #657796;
+    font-size:24px;
 }
 
-.restart {
-    margin-top: 9px;
-
-    padding: 8px 20px;
-
-    background: #000;
-    color: #39ff14;
-
-    border: 2px solid #39ff14;
-    border-radius: 9px;
-
-    font-weight: bold;
+.popup,
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.78);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+    padding:15px;
 }
 
-.popup {
-    position: absolute;
-
-    inset: 0;
-
-    background: rgba(0,0,0,.92);
-
-    display: none;
-
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
+.popup.show,
+.modal.show{
+    display:flex;
 }
 
-.popup.show {
-    display: flex;
+.card{
+    width:min(94vw,470px);
+    max-height:85vh;
+    overflow:auto;
+    background:#111827;
+    border:2px solid #ffd52b;
+    border-radius:20px;
+    padding:20px;
 }
 
-.popup-box {
-    width: 85%;
-    max-width: 330px;
-
-    border: 3px solid #39ff14;
-    border-radius: 16px;
-
-    padding: 22px;
-
-    background: #000;
+.card h2{
+    color:#ffd52b;
+    margin-bottom:15px;
 }
 
-.popup-box h2 {
-    color: #39ff14;
-    font-size: 31px;
-    margin-bottom: 10px;
+.grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
 }
 
-.popup-box p {
-    color: white;
-    line-height: 1.8;
+.choice{
+    min-height:58px;
+    background:#202b40;
+    border:1px solid #52627c;
+    border-radius:11px;
+    color:white;
+    font-size:25px;
+    padding:7px;
 }
 
-.popup-button {
-    margin-top: 15px;
-
-    padding: 10px 25px;
-
-    background: #39ff14;
-    color: #000;
-
-    border: 0;
-    border-radius: 8px;
-
-    font-weight: bold;
+.choice small{
+    display:block;
+    font-size:10px;
+    margin-top:3px;
 }
 
-.face-panel {
-    position: fixed;
-    inset: 0;
-
-    background: rgba(0,0,0,.95);
-
-    z-index: 50;
-
-    display: none;
-
-    align-items: center;
-    justify-content: center;
+.choice.selected{
+    border:2px solid #ffd52b;
+    background:#37445b;
 }
 
-.face-panel.show {
-    display: flex;
+.close{
+    margin-top:16px;
+    padding:9px 22px;
+    border:0;
+    border-radius:10px;
+    background:#ffd52b;
+    color:#111;
+    font-weight:bold;
 }
 
-.face-box {
-    width: 92%;
-    max-width: 440px;
-
-    border: 2px solid #39ff14;
-    border-radius: 15px;
-
-    background: #000;
-
-    padding: 15px;
+.giftIcon{
+    font-size:75px;
+    margin:8px;
 }
 
-.face-box h2 {
-    text-align: center;
-    color: #39ff14;
-    margin-bottom: 13px;
+.reward{
+    background:#202b40;
+    border-radius:12px;
+    padding:15px;
+    line-height:1.7;
 }
 
-.faces {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-}
-
-.face {
-    height: 55px;
-
-    background: #000;
-
-    border: 2px solid #39ff14;
-    border-radius: 9px;
-
-    color: white;
-
-    font-size: 24px;
-
-    cursor: pointer;
-}
-
-.face.selected {
-    background: #39ff14;
-    color: #000;
-}
-
-.close-face {
-    display: block;
-
-    margin: 15px auto 0;
-
-    padding: 8px 22px;
-
-    background: #000;
-
-    border: 2px solid #39ff14;
-    border-radius: 8px;
-
-    color: #39ff14;
-}
-
-@media(max-height:700px) {
-
-    .game-wrapper {
-        padding-top: 4px;
+@media(max-width:430px){
+    h1{font-size:28px}
+    .game{
+        width:92vw;
+        height:92vw;
     }
-
-    .title {
-        font-size: 27px;
+    .control{
+        width:61px;
+        height:48px;
     }
-
-    .game-board {
-        width: min(80vw, 390px);
-        height: min(80vw, 390px);
-    }
-
-    .btn {
-        width: 65px;
-        height: 48px;
-    }
-
 }
-
 </style>
 </head>
 
 <body>
 
-<div class="game-wrapper">
+<div class="app">
 
-    <div class="title">
-        🐍 SNAKE GAME 🍎
-    </div>
+<h1>🐍 SNAKE WORLD</h1>
+<div class="sub">Eat • Grow • Collect • Unlock</div>
 
-    <div class="info">
+<div class="stats">
+    <div class="stat">Score <b id="score">0</b></div>
+    <div class="stat">🍎 <b id="fruitCount">0</b></div>
+    <div class="stat">🪙 <b id="coins">0</b></div>
+    <div class="stat">🏆 <b id="best">0</b></div>
+    <div class="stat">🎁 <b id="gifts">0</b></div>
+</div>
 
-        Score:
-        <span id="score">0</span>
+<div class="toolbar">
+    <button class="tool" id="fruitButton">🍎 Fruits</button>
+    <button class="tool" id="faceButton">🎭 Face</button>
+    <button class="tool" id="skinButton">🐍 Skin</button>
+    <button class="tool" id="pauseButton">⏸️ Pause</button>
+</div>
 
-        &nbsp; | &nbsp;
+<div class="game">
+    <canvas id="canvas"></canvas>
 
-        Fruits:
-        <span id="fruitCount">0/10</span>
+    <div class="popup" id="gameOver">
+        <div class="card">
+            <h2>💥 GAME OVER</h2>
 
-        &nbsp; | &nbsp;
+            <p>
+                Score: <b id="finalScore">0</b><br>
+                Fruits: <b id="finalFruits">0</b>
+            </p>
 
-        Level:
-        <span id="level">1</span>
-
-        <br>
-
-        🏆 Reward:
-        <span id="reward">None</span>
-
-    </div>
-
-
-    <!-- TOP BUTTONS -->
-
-    <div class="top-buttons">
-
-        <button class="top-btn"
-                id="fruitButton">
-
-            🍎 10 FRUITS
-
-        </button>
-
-        <button class="top-btn"
-                id="faceButton">
-
-            🎭 FACE
-
-        </button>
-
-    </div>
-
-
-    <!-- GAME -->
-
-    <div class="game-board">
-
-        <canvas id="gameCanvas"></canvas>
-
-
-        <div class="popup" id="gameOver">
-
-            <div class="popup-box">
-
-                <h2>GAME OVER</h2>
-
-                <p>
-
-                    Score:
-                    <strong id="finalScore">
-                        0
-                    </strong>
-
-                    <br>
-
-                    Level:
-                    <strong id="finalLevel">
-                        1
-                    </strong>
-
-                    <br>
-
-                    Reward:
-                    <strong id="finalReward">
-                        None
-                    </strong>
-
-                </p>
-
-                <button
-                    class="popup-button"
-                    id="popupRestart">
-
-                    PLAY AGAIN
-
-                </button>
-
-            </div>
-
+            <button class="close" id="again">
+                🎮 PLAY AGAIN
+            </button>
         </div>
+    </div>
+</div>
 
+<!-- Emoji control layout -->
+<div class="controls">
+
+    <div class="row">
+        <button class="control" data-dir="up">⬆️</button>
     </div>
 
-
-    <!-- CONTROLS -->
-
-    <div class="controls">
-
-        <div class="control-row">
-
-            <button class="btn"
-                    data-direction="up">
-
-                ▲
-
-            </button>
-
-        </div>
-
-
-        <div class="control-row">
-
-            <button class="btn"
-                    data-direction="left">
-
-                ◀
-
-            </button>
-
-
-            <button class="btn down"
-                    data-direction="down">
-
-                ▼
-
-            </button>
-
-
-            <button class="btn"
-                    data-direction="right">
-
-                ▶
-
-            </button>
-
-        </div>
-
+    <div class="row">
+        <button class="control" data-dir="left">⬅️</button>
+        <button class="control" data-dir="down">⬇️</button>
+        <button class="control" data-dir="right">➡️</button>
     </div>
 
-
-    <button class="restart"
-            id="restart">
-
-        ↻ Restart
-
-    </button>
+</div>
 
 </div>
 
 
-<!-- FACE SELECTOR -->
+<!-- FRUIT MENU -->
 
-<div class="face-panel"
-     id="facePanel">
+<div class="modal" id="fruitModal">
+    <div class="card">
 
-    <div class="face-box">
+        <h2>🍎 अपना Fruit चुनो</h2>
 
-        <h2>
-            🐍 Choose Snake Face
-        </h2>
+        <div class="grid">
 
-        <div class="faces">
-
-            <button class="face selected"
-                    data-face="0">
-                😐
+            <button class="choice" data-fruit="🍎">
+                🍎<small>सेब</small>
             </button>
 
-            <button class="face"
-                    data-face="1">
-                🙂
+            <button class="choice" data-fruit="🍊">
+                🍊<small>संतरा</small>
             </button>
 
-            <button class="face"
-                    data-face="2">
-                😎
+            <button class="choice" data-fruit="🍇">
+                🍇<small>अंगूर</small>
             </button>
 
-            <button class="face"
-                    data-face="3">
-                😈
+            <button class="choice" data-fruit="🍉">
+                🍉<small>तरबूज</small>
             </button>
 
-            <button class="face"
-                    data-face="4">
-                😡
+            <button class="choice" data-fruit="🍓">
+                🍓<small>स्ट्रॉबेरी</small>
             </button>
 
-            <button class="face"
-                    data-face="5">
-                👿
+            <button class="choice" data-fruit="🍌">
+                🍌<small>केला</small>
             </button>
 
-            <button class="face"
-                    data-face="6">
-                🤪
+            <button class="choice" data-fruit="🍍">
+                🍍<small>अनानास</small>
             </button>
 
-            <button class="face"
-                    data-face="7">
-                😱
+            <button class="choice" data-fruit="🥭">
+                🥭<small>आम</small>
             </button>
 
-            <button class="face"
-                    data-face="8">
-                🥶
+            <button class="choice" data-fruit="🍒">
+                🍒<small>चेरी</small>
             </button>
 
-            <button class="face"
-                    data-face="9">
-                🐍
+            <button class="choice" data-fruit="🥝">
+                🥝<small>कीवी</small>
             </button>
 
         </div>
 
-        <button class="close-face"
-                id="closeFace">
-
-            CLOSE
-
+        <button class="close" data-close="fruitModal">
+            बंद करें
         </button>
 
     </div>
+</div>
 
+
+<!-- FACE MENU -->
+
+<div class="modal" id="faceModal">
+    <div class="card">
+
+        <h2>🎭 Snake Emotion</h2>
+
+        <div class="grid">
+
+            <button class="choice" data-face="normal">🙂<small>Normal</small></button>
+            <button class="choice" data-face="happy">😄<small>Happy</small></button>
+            <button class="choice" data-face="cool">😎<small>Cool</small></button>
+            <button class="choice" data-face="angry">😡<small>Angry</small></button>
+            <button class="choice" data-face="danger">😈<small>Danger</small></button>
+
+            <button class="choice" data-face="sad">😢<small>Sad</small></button>
+            <button class="choice" data-face="cry">😭<small>Crying</small></button>
+            <button class="choice" data-face="scared">😱<small>Scared</small></button>
+            <button class="choice" data-face="sleep">😴<small>Sleepy</small></button>
+            <button class="choice" data-face="crazy">🤪<small>Crazy</small></button>
+
+            <button class="choice" data-face="laugh">😂<small>Laugh</small></button>
+            <button class="choice" data-face="innocent">🥺<small>Innocent</small></button>
+            <button class="choice" data-face="excited">🤩<small>Excited</small></button>
+            <button class="choice" data-face="mad">😤<small>Mad</small></button>
+            <button class="choice" data-face="angel">😇<small>Angel</small></button>
+
+        </div>
+
+        <button class="close" data-close="faceModal">
+            बंद करें
+        </button>
+
+    </div>
+</div>
+
+
+<!-- SKIN MENU -->
+
+<div class="modal" id="skinModal">
+    <div class="card">
+
+        <h2>🐍 Snake Skin</h2>
+
+        <div class="grid">
+
+            <button class="choice" data-skin="yellow">🟡<small>Yellow</small></button>
+            <button class="choice" data-skin="blue">🔵<small>Blue</small></button>
+            <button class="choice" data-skin="red">🔴<small>Fire</small></button>
+            <button class="choice" data-skin="purple">🟣<small>Magic</small></button>
+            <button class="choice" data-skin="rainbow">🌈<small>Rainbow</small></button>
+
+        </div>
+
+        <button class="close" data-close="skinModal">
+            बंद करें
+        </button>
+
+    </div>
+</div>
+
+
+<!-- GIFT -->
+
+<div class="modal" id="giftModal">
+    <div class="card" style="text-align:center">
+
+        <h2>🎁 GIFT UNLOCKED!</h2>
+
+        <div class="giftIcon">🎁</div>
+
+        <div class="reward" id="rewardText"></div>
+
+        <button class="close" data-close="giftModal">
+            खोलें / बंद करें
+        </button>
+
+    </div>
 </div>
 
 
 <script>
 
-/* =====================================================
-   BASIC SETUP
-===================================================== */
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
 
-const canvas =
-    document.getElementById("gameCanvas");
+const GRID=20;
 
-const ctx =
-    canvas.getContext("2d");
+/*
+ IMPORTANT:
+ Speed हमेशा same रहेगी.
+ Score बढ़ने पर speed नहीं बढ़ेगी.
+*/
 
+const SPEED=170;
 
-let gridSize = 20;
+let tile=20;
 
-let tileSize;
+let snake=[];
+let fruit={x:10,y:10};
 
-let snake = [];
+let direction={x:1,y:0};
+let nextDirection={x:1,y:0};
 
-let fruits = [];
+let score=0;
+let fruitCount=0;
+let coins=0;
+let gifts=0;
 
-let obstacles = [];
+let selectedFruit="🍎";
 
-let direction = {
-    x: 1,
-    y: 0
-};
+let selectedFace="normal";
+let selectedSkin="yellow";
 
-let nextDirection = {
-    x: 1,
-    y: 0
-};
+let running=true;
+let paused=false;
 
-let score = 0;
+let lastTime=0;
 
-let fruitCount = 0;
+let tongue=false;
+let tongueTimer=0;
 
-let level = 1;
+let best=
+    Number(localStorage.getItem("snakeBest")||0);
 
-let gameRunning = true;
-
-let lastMove = 0;
-
-let moveSpeed = 145;
-
-
-/* =====================================================
-   FACE
-===================================================== */
-
-let selectedFace = 0;
+document.getElementById("best").textContent=best;
 
 
-/* =====================================================
-   TONGUE ANIMATION
-===================================================== */
-
-let tongueVisible = false;
-
-let tongueTimer = 0;
-
-
-/* =====================================================
+/* =========================
    AUDIO
-===================================================== */
+========================= */
 
-let audioContext = null;
+let audioContext=null;
 
+function audioStart(){
 
-function initAudio() {
+    if(!audioContext){
 
-    if (!audioContext) {
-
-        audioContext =
-            new (
-                window.AudioContext ||
-                window.webkitAudioContext
-            )();
+        audioContext=
+            new (window.AudioContext||
+                 window.webkitAudioContext)();
 
     }
 
-    if (
-        audioContext.state ===
-        "suspended"
-    ) {
-
+    if(audioContext.state==="suspended"){
         audioContext.resume();
-
     }
-
 }
 
+function sound(freq,duration,type="sine",volume=.11){
 
-/* -------------------------------
-   Generic sound
--------------------------------- */
+    audioStart();
 
-function playTone(
-    frequency,
-    duration,
-    type = "square",
-    volume = 0.06
-) {
+    const osc=audioContext.createOscillator();
+    const gain=audioContext.createGain();
 
-    initAudio();
-
-    const oscillator =
-        audioContext.createOscillator();
-
-    const gain =
-        audioContext.createGain();
-
-
-    oscillator.type = type;
-
-    oscillator.frequency.value =
-        frequency;
-
+    osc.type=type;
+    osc.frequency.value=freq;
 
     gain.gain.setValueAtTime(
         volume,
@@ -688,638 +513,285 @@ function playTone(
     );
 
     gain.gain.exponentialRampToValueAtTime(
-        0.001,
-        audioContext.currentTime +
-        duration
+        .001,
+        audioContext.currentTime+duration
     );
 
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
 
-    oscillator.connect(gain);
+    osc.start();
 
-    gain.connect(
-        audioContext.destination
+    osc.stop(
+        audioContext.currentTime+duration
     );
-
-
-    oscillator.start();
-
-    oscillator.stop(
-        audioContext.currentTime +
-        duration
-    );
-
 }
 
 
-/* =====================================================
-   FRUIT SOUND
-   TING-TING
-===================================================== */
+/* Fruit: TUIING-TUIING */
 
-function fruitSound() {
+function fruitSound(){
 
-    playTone(
-        900,
-        .09,
-        "square",
-        .06
+    sound(900,.10,"triangle",.13);
+
+    setTimeout(
+        ()=>sound(1300,.13,"triangle",.13),
+        100
     );
-
-    setTimeout(() => {
-
-        playTone(
-            1300,
-            .11,
-            "square",
-            .05
-        );
-
-    }, 90);
-
 }
 
 
-/* =====================================================
-   COLLISION SOUND
-   THAK-THAK
-===================================================== */
+/* Wall: THAK-THAK */
 
-function collisionSound() {
+function wallSound(){
 
-    playTone(
-        110,
-        .14,
-        "sawtooth",
-        .08
+    sound(110,.14,"square",.14);
+
+    setTimeout(
+        ()=>sound(65,.16,"square",.13),
+        130
     );
-
-    setTimeout(() => {
-
-        playTone(
-            75,
-            .18,
-            "sawtooth",
-            .08
-        );
-
-    }, 130);
-
 }
 
 
-/* =====================================================
-   TRONG SOUND
-===================================================== */
+/* Gift: TRONG */
 
-function trongSound() {
+function giftSound(){
 
-    playTone(
-        220,
-        .15,
-        "triangle",
-        .07
+    sound(260,.13,"triangle",.12);
+
+    setTimeout(
+        ()=>sound(520,.16,"triangle",.12),
+        110
     );
 
-    setTimeout(() => {
-
-        playTone(
-            440,
-            .18,
-            "triangle",
-            .06
-        );
-
-    }, 100);
-
+    setTimeout(
+        ()=>sound(780,.18,"triangle",.12),
+        230
+    );
 }
 
 
-/* =====================================================
+/* =========================
    RESIZE
-===================================================== */
+========================= */
 
-function resizeCanvas() {
+function resize(){
 
-    const rect =
-        canvas.getBoundingClientRect();
+    const r=canvas.getBoundingClientRect();
 
-    canvas.width =
-        rect.width;
+    canvas.width=r.width;
+    canvas.height=r.height;
 
-    canvas.height =
-        rect.height;
-
-    tileSize =
-        canvas.width /
-        gridSize;
+    tile=canvas.width/GRID;
 
     draw();
-
 }
 
-window.addEventListener(
-    "resize",
-    resizeCanvas
-);
+window.addEventListener("resize",resize);
 
 
-/* =====================================================
+/* =========================
    START
-===================================================== */
+========================= */
 
-function startGame() {
+function startGame(){
 
-    snake = [
-
-        {
-            x: 10,
-            y: 10
-        },
-
-        {
-            x: 9,
-            y: 10
-        },
-
-        {
-            x: 8,
-            y: 10
-        },
-
-        {
-            x: 7,
-            y: 10
-        }
-
+    snake=[
+        {x:10,y:10},
+        {x:9,y:10},
+        {x:8,y:10},
+        {x:7,y:10}
     ];
 
+    direction={x:1,y:0};
+    nextDirection={x:1,y:0};
 
-    direction = {
-        x: 1,
-        y: 0
-    };
+    score=0;
+    fruitCount=0;
 
+    running=true;
+    paused=false;
 
-    nextDirection = {
-        x: 1,
-        y: 0
-    };
-
-
-    score = 0;
-
-    fruitCount = 0;
-
-    level = 1;
-
-    moveSpeed = 145;
-
-    obstacles = [];
-
-    gameRunning = true;
-
-    lastMove = 0;
+    createFruit();
 
     document
         .getElementById("gameOver")
-        .classList
-        .remove("show");
+        .classList.remove("show");
 
+    document
+        .getElementById("pauseButton")
+        .textContent="⏸️ Pause";
 
-    createObstacles();
-
-    createTenFruits();
-
-    updateInfo();
-
-    draw();
-
+    updateUI();
 }
 
 
-/* =====================================================
-   CREATE 10 FRUITS
-===================================================== */
+/* =========================
+   ONE FRUIT ONLY
+========================= */
 
-function createTenFruits() {
+function createFruit(){
 
-    fruits = [];
+    let valid=false;
 
+    while(!valid){
 
-    for (
-        let i = 0;
-        i < 10;
-        i++
-    ) {
-
-        createOneFruit();
-
-    }
-
-}
-
-
-/* =====================================================
-   CREATE ONE FRUIT
-===================================================== */
-
-function createOneFruit() {
-
-    let fruit;
-
-    let valid = false;
-
-
-    while (!valid) {
-
-        fruit = {
-
-            x:
-                Math.floor(
-                    Math.random() *
-                    gridSize
-                ),
-
-            y:
-                Math.floor(
-                    Math.random() *
-                    gridSize
-                ),
-
-            type:
-                Math.floor(
-                    Math.random() * 5
-                )
-
+        fruit={
+            x:Math.floor(Math.random()*GRID),
+            y:Math.floor(Math.random()*GRID)
         };
 
-
-        const onSnake =
-            snake.some(
-                part =>
-                    part.x === fruit.x &&
-                    part.y === fruit.y
-            );
-
-
-        const onObstacle =
-            obstacles.some(
-                block =>
-                    block.x === fruit.x &&
-                    block.y === fruit.y
-            );
-
-
-        const onFruit =
-            fruits.some(
-                item =>
-                    item.x === fruit.x &&
-                    item.y === fruit.y
-            );
-
-
-        valid =
-            !onSnake &&
-            !onObstacle &&
-            !onFruit;
-
-    }
-
-
-    fruits.push(fruit);
-
-}
-
-
-/* =====================================================
-   TOP FRUIT BUTTON
-===================================================== */
-
-document
-    .getElementById("fruitButton")
-    .addEventListener(
-        "click",
-        function() {
-
-            initAudio();
-
-            createTenFruits();
-
-            fruitCount = 0;
-
-            updateInfo();
-
-            trongSound();
-
-        }
-    );
-
-
-/* =====================================================
-   OBSTACLES
-===================================================== */
-
-function createObstacles() {
-
-    obstacles = [];
-
-
-    const count =
-        Math.min(
-            18,
-            Math.max(
-                0,
-                (level - 1) * 2
-            )
+        valid=!snake.some(
+            s=>s.x===fruit.x &&
+               s.y===fruit.y
         );
-
-
-    for (
-        let i = 0;
-        i < count;
-        i++
-    ) {
-
-        let block;
-
-        let valid = false;
-
-
-        while (!valid) {
-
-            block = {
-
-                x:
-                    Math.floor(
-                        Math.random() *
-                        gridSize
-                    ),
-
-                y:
-                    Math.floor(
-                        Math.random() *
-                        gridSize
-                    )
-
-            };
-
-
-            const snakeArea =
-                block.x >= 6 &&
-                block.x <= 13 &&
-                block.y >= 7 &&
-                block.y <= 13;
-
-
-            const duplicate =
-                obstacles.some(
-                    item =>
-                        item.x === block.x &&
-                        item.y === block.y
-                );
-
-
-            valid =
-                !snakeArea &&
-                !duplicate;
-
-        }
-
-
-        obstacles.push(block);
-
     }
-
 }
 
 
-/* =====================================================
+/* =========================
    DIRECTION
-===================================================== */
+========================= */
 
-function changeDirection(newDirection) {
+function changeDirection(x,y){
 
-    if (!gameRunning) return;
+    if(!running||paused)return;
 
+    if(
+        x===-direction.x &&
+        y===-direction.y
+    )return;
 
-    if (
-        newDirection.x ===
-        -direction.x &&
-
-        newDirection.y ===
-        -direction.y
-    ) {
-
-        return;
-
-    }
-
-
-    nextDirection =
-        newDirection;
-
+    nextDirection={x,y};
 }
 
 
-/* =====================================================
-   KEYBOARD
-===================================================== */
+/* Keyboard */
 
-document.addEventListener(
-    "keydown",
-    event => {
+document.addEventListener("keydown",e=>{
 
-        if (
-            event.key ===
-            "ArrowUp"
-        ) {
+    if(e.key==="ArrowUp")
+        changeDirection(0,-1);
 
-            changeDirection({
-                x: 0,
-                y: -1
-            });
+    if(e.key==="ArrowDown")
+        changeDirection(0,1);
 
-        }
+    if(e.key==="ArrowLeft")
+        changeDirection(-1,0);
 
-        if (
-            event.key ===
-            "ArrowDown"
-        ) {
+    if(e.key==="ArrowRight")
+        changeDirection(1,0);
 
-            changeDirection({
-                x: 0,
-                y: 1
-            });
-
-        }
-
-        if (
-            event.key ===
-            "ArrowLeft"
-        ) {
-
-            changeDirection({
-                x: -1,
-                y: 0
-            });
-
-        }
-
-        if (
-            event.key ===
-            "ArrowRight"
-        ) {
-
-            changeDirection({
-                x: 1,
-                y: 0
-            });
-
-        }
-
-    }
-);
+    if(e.key===" "||e.key.toLowerCase()==="p")
+        togglePause();
+});
 
 
-/* =====================================================
-   MOBILE BUTTONS
-===================================================== */
+/* Buttons */
 
-document
-    .querySelectorAll(".btn")
-    .forEach(button => {
+document.querySelectorAll(".control")
+.forEach(btn=>{
 
-        button.addEventListener(
-            "click",
-            () => {
+    btn.addEventListener("click",()=>{
 
-                const d =
-                    button.dataset.direction;
+        audioStart();
 
+        const d=btn.dataset.dir;
 
-                if (d === "up") {
-
-                    changeDirection({
-                        x: 0,
-                        y: -1
-                    });
-
-                }
-
-
-                if (d === "down") {
-
-                    changeDirection({
-                        x: 0,
-                        y: 1
-                    });
-
-                }
-
-
-                if (d === "left") {
-
-                    changeDirection({
-                        x: -1,
-                        y: 0
-                    });
-
-                }
-
-
-                if (d === "right") {
-
-                    changeDirection({
-                        x: 1,
-                        y: 0
-                    });
-
-                }
-
-            }
-        );
+        if(d==="up")changeDirection(0,-1);
+        if(d==="down")changeDirection(0,1);
+        if(d==="left")changeDirection(-1,0);
+        if(d==="right")changeDirection(1,0);
 
     });
+});
 
 
-/* =====================================================
+/* =========================
+   SWIPE
+========================= */
+
+let sx=0,sy=0;
+
+canvas.addEventListener("touchstart",e=>{
+
+    sx=e.changedTouches[0].clientX;
+    sy=e.changedTouches[0].clientY;
+
+},{passive:true});
+
+
+canvas.addEventListener("touchend",e=>{
+
+    const x=e.changedTouches[0].clientX;
+    const y=e.changedTouches[0].clientY;
+
+    const dx=x-sx;
+    const dy=y-sy;
+
+    if(Math.abs(dx)<20&&Math.abs(dy)<20)return;
+
+    if(Math.abs(dx)>Math.abs(dy)){
+
+        changeDirection(
+            dx>0?1:-1,
+            0
+        );
+
+    }else{
+
+        changeDirection(
+            0,
+            dy>0?1:-1
+        );
+
+    }
+
+},{passive:true});
+
+
+/* =========================
    UPDATE
-===================================================== */
+========================= */
 
-function update() {
+function update(){
 
-    if (!gameRunning)
-        return;
+    if(!running||paused)return;
 
+    direction=nextDirection;
 
-    direction =
-        nextDirection;
-
-
-    const head = {
-
-        x:
-            snake[0].x +
-            direction.x,
-
-        y:
-            snake[0].y +
-            direction.y
-
+    const head={
+        x:snake[0].x+direction.x,
+        y:snake[0].y+direction.y
     };
 
 
     /* WALL */
 
-    if (
-        head.x < 0 ||
-        head.x >= gridSize ||
-        head.y < 0 ||
-        head.y >= gridSize
-    ) {
+    if(
+        head.x<0 ||
+        head.x>=GRID ||
+        head.y<0 ||
+        head.y>=GRID
+    ){
 
-        endGame();
-
+        gameOver();
         return;
-
     }
 
 
     /* BODY */
 
-    const hitBody =
+    if(
         snake.some(
-            part =>
-                part.x === head.x &&
-                part.y === head.y
-        );
+            s=>s.x===head.x &&
+               s.y===head.y
+        )
+    ){
 
-
-    if (hitBody) {
-
-        endGame();
-
+        gameOver();
         return;
-
-    }
-
-
-    /* OBSTACLE */
-
-    const hitObstacle =
-        obstacles.some(
-            block =>
-                block.x === head.x &&
-                block.y === head.y
-        );
-
-
-    if (hitObstacle) {
-
-        endGame();
-
-        return;
-
     }
 
 
@@ -1328,1194 +800,751 @@ function update() {
 
     /* FRUIT */
 
-    const fruitIndex =
-        fruits.findIndex(
-            fruit =>
-                fruit.x === head.x &&
-                fruit.y === head.y
-        );
+    if(
+        head.x===fruit.x &&
+        head.y===fruit.y
+    ){
 
-
-    if (fruitIndex !== -1) {
-
-        fruits.splice(
-            fruitIndex,
-            1
-        );
-
-
-        score += 10;
-
+        score+=10;
         fruitCount++;
-
+        coins+=2;
 
         fruitSound();
 
-
-        /* Reward */
-
-        updateReward();
-
-
         /*
-           अगर 10 fruits खत्म
-           हो गए तो नया batch
+          IMPORTANT:
+          Snake pop नहीं होगा,
+          इसलिए Snake बड़ा होगा.
         */
 
-        if (fruits.length === 0) {
+        createFruit();
 
-            createTenFruits();
+        if(fruitCount%100===0){
 
-            fruitCount = 0;
+            gifts++;
+            coins+=50;
 
-            trongSound();
-
-        }
-
-
-        /* Level */
-
-        const newLevel =
-            Math.floor(
-                score / 50
-            ) + 1;
-
-
-        if (
-            newLevel !== level
-        ) {
-
-            level =
-                newLevel;
-
-
-            moveSpeed =
-                Math.max(
-                    85,
-                    145 -
-                    ((level - 1) * 8)
-                );
-
-
-            createObstacles();
-
-            trongSound();
+            showGift();
 
         }
 
-    }
+        saveBest();
 
-    else {
+    }else{
+
+        /*
+          Fruit नहीं खाया तो
+          tail हटेगा.
+        */
 
         snake.pop();
-
     }
 
-
-    updateInfo();
-
+    updateUI();
 }
 
 
-/* =====================================================
-   REWARD SYSTEM
-===================================================== */
+/* =========================
+   GAME OVER
+========================= */
 
-function getReward() {
+function gameOver(){
 
-    if (score >= 500)
-        return "👑 Golden Crown";
+    running=false;
 
-    if (score >= 300)
-        return "🏆 Champion";
+    wallSound();
 
-    if (score >= 200)
-        return "🥇 Gold";
+    saveBest();
 
-    if (score >= 100)
-        return "🥈 Silver";
+    document.getElementById("finalScore")
+        .textContent=score;
 
-    if (score >= 50)
-        return "🥉 Bronze";
+    document.getElementById("finalFruits")
+        .textContent=fruitCount;
 
-    return "None";
+    setTimeout(()=>{
 
+        document
+            .getElementById("gameOver")
+            .classList.add("show");
+
+    },180);
 }
 
 
-function updateReward() {
+/* =========================
+   SAVE
+========================= */
 
-    document
-        .getElementById("reward")
-        .textContent =
-        getReward();
+function saveBest(){
 
+    if(score>best){
+
+        best=score;
+
+        localStorage.setItem(
+            "snakeBest",
+            best
+        );
+    }
 }
 
 
-/* =====================================================
-   INFO
-===================================================== */
+/* =========================
+   UI
+========================= */
 
-function updateInfo() {
+function updateUI(){
 
-    document
-        .getElementById("score")
-        .textContent =
-        score;
+    document.getElementById("score")
+        .textContent=score;
 
+    document.getElementById("fruitCount")
+        .textContent=fruitCount;
 
-    document
-        .getElementById("fruitCount")
-        .textContent =
-        fruitCount + "/10";
+    document.getElementById("coins")
+        .textContent=coins;
 
+    document.getElementById("best")
+        .textContent=best;
 
-    document
-        .getElementById("level")
-        .textContent =
-        level;
-
-
-    document
-        .getElementById("reward")
-        .textContent =
-        getReward();
-
+    document.getElementById("gifts")
+        .textContent=gifts;
 }
 
 
-/* =====================================================
+/* =========================
    DRAW
-===================================================== */
+========================= */
 
-function draw() {
+function draw(){
 
-    if (!tileSize)
-        return;
-
-
-    ctx.fillStyle =
-        "#000";
-
-
-    ctx.fillRect(
-        0,
-        0,
+    ctx.clearRect(
+        0,0,
         canvas.width,
         canvas.height
     );
 
 
-    obstacles.forEach(
-        drawObstacle
-    );
+    /* Green surface */
 
-
-    fruits.forEach(
-        drawFruit
-    );
-
-
-    snake.forEach(
-        (part, index) =>
-            drawSnake(
-                part,
-                index
-            )
-    );
-
-}
-
-
-/* =====================================================
-   OBSTACLE DRAW
-===================================================== */
-
-function drawObstacle(block) {
-
-    const x =
-        block.x * tileSize + 2;
-
-    const y =
-        block.y * tileSize + 2;
-
-    const size =
-        tileSize - 4;
-
-
-    ctx.fillStyle =
-        "#125c12";
-
+    ctx.fillStyle="#138a2e";
 
     ctx.fillRect(
-        x,
-        y,
-        size,
-        size
+        0,0,
+        canvas.width,
+        canvas.height
     );
 
 
-    ctx.strokeStyle =
-        "#39ff14";
+    /* very subtle grid */
+
+    ctx.strokeStyle="rgba(255,255,255,.035)";
+
+    for(let i=0;i<=GRID;i++){
+
+        ctx.beginPath();
+
+        ctx.moveTo(i*tile,0);
+        ctx.lineTo(i*tile,canvas.height);
+
+        ctx.stroke();
+
+        ctx.beginPath();
+
+        ctx.moveTo(0,i*tile);
+        ctx.lineTo(canvas.width,i*tile);
+
+        ctx.stroke();
+    }
 
 
-    ctx.lineWidth = 2;
+    /* Fruit */
+
+    drawFruit();
 
 
-    ctx.strokeRect(
-        x,
-        y,
-        size,
-        size
+    /* Snake */
+
+    snake.forEach(
+        (part,index)=>
+            drawSnake(part,index)
     );
-
 }
 
 
-/* =====================================================
-   FRUIT DRAW
-===================================================== */
+/* =========================
+   FRUIT
+========================= */
 
-function drawFruit(fruit) {
+function drawFruit(){
 
-    const x =
-        fruit.x * tileSize +
-        tileSize / 2;
+    const x=
+        fruit.x*tile+tile/2;
 
-    const y =
-        fruit.y * tileSize +
-        tileSize / 2;
+    const y=
+        fruit.y*tile+tile/2;
 
+    ctx.font=`${tile*.72}px Arial`;
 
-    const fruitTypes = [
-        "🍎",
-        "🍊",
-        "🍓",
-        "🍇",
-        "🍉"
-    ];
-
-
-    ctx.font =
-        `${tileSize * .72}px Arial`;
-
-    ctx.textAlign =
-        "center";
-
-    ctx.textBaseline =
-        "middle";
-
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
 
     ctx.fillText(
-        fruitTypes[fruit.type],
+        selectedFruit,
         x,
         y
     );
-
 }
 
 
-/* =====================================================
-   SNAKE DRAW
-===================================================== */
+/* =========================
+   SNAKE COLOUR
+========================= */
 
-function drawSnake(
-    part,
-    index
-) {
+function snakeColor(index){
 
-    const padding = 1;
+    if(selectedSkin==="yellow")
+        return "#ffd21c";
 
-    const x =
-        part.x * tileSize +
-        padding;
+    if(selectedSkin==="blue")
+        return "#27b8ed";
 
-    const y =
-        part.y * tileSize +
-        padding;
+    if(selectedSkin==="red")
+        return "#ef402b";
 
-    const size =
-        tileSize -
-        padding * 2;
+    if(selectedSkin==="purple")
+        return "#b451df";
 
+    if(selectedSkin==="rainbow"){
 
-    if (index === 0) {
+        const c=[
+            "#ff5252",
+            "#ffca28",
+            "#66bb6a",
+            "#29b6f6",
+            "#ab47bc"
+        ];
 
-        ctx.fillStyle =
-            "#39ff14";
-
-
-        ctx.fillRect(
-            x,
-            y,
-            size,
-            size
-        );
-
-
-        drawFace(
-            x,
-            y,
-            size
-        );
-
+        return c[index%c.length];
     }
 
-    else {
-
-        ctx.fillStyle =
-            index % 2 === 0
-                ? "#28d915"
-                : "#159b0b";
-
-
-        ctx.fillRect(
-            x,
-            y,
-            size,
-            size
-        );
-
-    }
-
+    return "#ffd21c";
 }
 
 
-/* =====================================================
-   SNAKE FACE
-===================================================== */
+/* =========================
+   SNAKE BODY
+========================= */
 
-function drawFace(
-    x,
-    y,
-    size
-) {
+function drawSnake(p,index){
+
+    const x=p.x*tile+1;
+    const y=p.y*tile+1;
+    const s=tile-2;
+
+    ctx.fillStyle=snakeColor(index);
+
+    roundRect(
+        x,y,s,s,5
+    );
+
+    if(index===0){
+
+        drawHead(
+            x,y,s
+        );
+    }
+}
+
+
+function roundRect(x,y,w,h,r){
+
+    ctx.beginPath();
+
+    ctx.moveTo(x+r,y);
+
+    ctx.lineTo(x+w-r,y);
+
+    ctx.quadraticCurveTo(
+        x+w,y,
+        x+w,y+r
+    );
+
+    ctx.lineTo(
+        x+w,y+h-r
+    );
+
+    ctx.quadraticCurveTo(
+        x+w,y+h,
+        x+w-r,y+h
+    );
+
+    ctx.lineTo(
+        x+r,y+h
+    );
+
+    ctx.quadraticCurveTo(
+        x,y+h,
+        x,y+h-r
+    );
+
+    ctx.lineTo(x,y+r);
+
+    ctx.quadraticCurveTo(
+        x,y,
+        x+r,y
+    );
+
+    ctx.closePath();
+    ctx.fill();
+}
+
+
+/* =========================
+   HEAD
+========================= */
+
+function drawHead(x,y,s){
 
     ctx.save();
 
-    ctx.translate(
-        x,
-        y
-    );
-
-
     /*
-       Direction के अनुसार
-       पूरा face rotate
+      Face movement direction
     */
 
-    if (direction.x === -1) {
+    if(direction.x===-1){
 
-        ctx.translate(
-            size,
-            0
-        );
+        ctx.translate(x+s,y);
+        ctx.scale(-1,1);
 
-        ctx.scale(
-            -1,
-            1
-        );
+    }else if(direction.y===-1){
 
-    }
+        ctx.translate(x,y+s);
+        ctx.rotate(-Math.PI/2);
 
-    else if (
-        direction.y === -1
-    ) {
+    }else if(direction.y===1){
 
-        ctx.translate(
-            0,
-            size
-        );
+        ctx.translate(x+s,y);
+        ctx.rotate(Math.PI/2);
 
-        ctx.rotate(
-            -Math.PI / 2
-        );
+    }else{
 
-    }
-
-    else if (
-        direction.y === 1
-    ) {
-
-        ctx.translate(
-            size,
-            0
-        );
-
-        ctx.rotate(
-            Math.PI / 2
-        );
-
+        ctx.translate(x,y);
     }
 
 
-    /* =================================================
-       BLACK EYES
-    ================================================= */
+    /* BLACK EYES */
 
-    ctx.fillStyle =
-        "#000";
-
+    ctx.fillStyle="#000";
 
     ctx.beginPath();
 
     ctx.arc(
-        size * .32,
-        size * .35,
-        size * .085,
+        s*.30,
+        s*.32,
+        s*.085,
         0,
-        Math.PI * 2
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.beginPath();
+
+    ctx.arc(
+        s*.70,
+        s*.32,
+        s*.085,
+        0,
+        Math.PI*2
     );
 
     ctx.fill();
 
 
-    ctx.beginPath();
+    /* FACE */
 
-    ctx.arc(
-        size * .68,
-        size * .35,
-        size * .085,
-        0,
-        Math.PI * 2
-    );
+    ctx.strokeStyle="#000";
 
-    ctx.fill();
+    ctx.lineWidth=
+        Math.max(2,s*.055);
 
 
-    /* =================================================
-       DIFFERENT FACES
-    ================================================= */
+    if(
+        selectedFace==="angry" ||
+        selectedFace==="mad" ||
+        selectedFace==="danger"
+    ){
 
-    ctx.strokeStyle =
-        "#000";
-
-    ctx.lineWidth =
-        Math.max(
-            2,
-            size * .06
+        line(
+            s*.14,s*.18,
+            s*.42,s*.29
         );
 
-
-    /*
-       Face 0
-       Normal
-    */
-
-    if (selectedFace === 0) {
-
-        drawMouth(
-            size,
-            "normal"
+        line(
+            s*.58,s*.29,
+            s*.86,s*.18
         );
 
-    }
-
-
-    /*
-       Face 1
-       Cute
-    */
-
-    else if (
-        selectedFace === 1
-    ) {
-
-        drawMouth(
-            size,
-            "smile"
+        line(
+            s*.23,s*.67,
+            s*.77,s*.67
         );
 
-    }
+    }else if(selectedFace==="sad" ||
+             selectedFace==="cry"){
 
-
-    /*
-       Face 2
-       Cool
-    */
-
-    else if (
-        selectedFace === 2
-    ) {
-
-        drawMouth(
-            size,
-            "cool"
-        );
-
-    }
-
-
-    /*
-       Face 3
-       Evil
-    */
-
-    else if (
-        selectedFace === 3
-    ) {
-
-        drawAngry(
-            size,
-            1
-        );
-
-    }
-
-
-    /*
-       Face 4
-       Angry
-    */
-
-    else if (
-        selectedFace === 4
-    ) {
-
-        drawAngry(
-            size,
-            1.3
-        );
-
-    }
-
-
-    /*
-       Face 5
-       VERY DANGER
-    */
-
-    else if (
-        selectedFace === 5
-    ) {
-
-        drawAngry(
-            size,
-            2
-        );
-
-    }
-
-
-    /*
-       Face 6
-       Crazy
-    */
-
-    else if (
-        selectedFace === 6
-    ) {
-
-        drawMouth(
-            size,
-            "crazy"
-        );
-
-    }
-
-
-    /*
-       Face 7
-       Scared
-    */
-
-    else if (
-        selectedFace === 7
-    ) {
-
-        drawMouth(
-            size,
-            "scared"
-        );
-
-    }
-
-
-    /*
-       Face 8
-       Frozen
-    */
-
-    else if (
-        selectedFace === 8
-    ) {
-
-        drawMouth(
-            size,
-            "frozen"
-        );
-
-    }
-
-
-    /*
-       Face 9
-       Snake
-    */
-
-    else {
-
-        drawMouth(
-            size,
-            "snake"
-        );
-
-    }
-
-
-    /* =================================================
-       MOVING TONGUE
-    ================================================= */
-
-    drawTongue(
-        size
-    );
-
-
-    ctx.restore();
-
-}
-
-
-/* =====================================================
-   MOUTH
-===================================================== */
-
-function drawMouth(
-    size,
-    type
-) {
-
-    ctx.beginPath();
-
-
-    if (type === "smile") {
+        ctx.beginPath();
 
         ctx.arc(
-            size / 2,
-            size * .55,
-            size * .17,
+            s/2,
+            s*.76,
+            s*.17,
+            Math.PI,
+            Math.PI*2
+        );
+
+        ctx.stroke();
+
+    }else if(selectedFace==="happy" ||
+             selectedFace==="laugh"){
+
+        ctx.beginPath();
+
+        ctx.arc(
+            s/2,
+            s*.54,
+            s*.19,
             0,
             Math.PI
         );
 
         ctx.stroke();
 
-    }
+    }else if(selectedFace==="scared"){
 
-    else if (
-        type === "cool"
-    ) {
-
-        ctx.moveTo(
-            size * .28,
-            size * .65
-        );
-
-        ctx.lineTo(
-            size * .72,
-            size * .65
-        );
-
-        ctx.stroke();
-
-    }
-
-    else if (
-        type === "crazy"
-    ) {
-
-        ctx.moveTo(
-            size * .25,
-            size * .60
-        );
-
-        ctx.lineTo(
-            size * .50,
-            size * .72
-        );
-
-        ctx.lineTo(
-            size * .75,
-            size * .60
-        );
-
-        ctx.stroke();
-
-    }
-
-    else if (
-        type === "scared"
-    ) {
+        ctx.beginPath();
 
         ctx.arc(
-            size / 2,
-            size * .65,
-            size * .10,
+            s/2,
+            s*.65,
+            s*.11,
             0,
-            Math.PI * 2
+            Math.PI*2
         );
 
         ctx.stroke();
 
+    }else if(selectedFace==="sleep"){
+
+        line(
+            s*.20,s*.65,
+            s*.43,s*.65
+        );
+
+        line(
+            s*.57,s*.65,
+            s*.80,s*.65
+        );
+
+    }else{
+
+        line(
+            s*.32,s*.65,
+            s*.68,s*.65
+        );
     }
 
-    else if (
-        type === "frozen"
-    ) {
 
-        ctx.moveTo(
-            size * .32,
-            size * .65
+    /* TONGUE */
+
+    if(tongue){
+
+        ctx.strokeStyle="#ff3030";
+        ctx.lineWidth=Math.max(2,s*.05);
+
+        line(
+            s*.5,s*.66,
+            s*.5,s*.98
         );
 
-        ctx.lineTo(
-            size * .68,
-            size * .65
+        line(
+            s*.5,s*.98,
+            s*.40,s
         );
 
-        ctx.stroke();
-
+        line(
+            s*.5,s*.98,
+            s*.60,s
+        );
     }
 
-    else if (
-        type === "snake"
-    ) {
-
-        ctx.moveTo(
-            size * .25,
-            size * .64
-        );
-
-        ctx.lineTo(
-            size * .75,
-            size * .64
-        );
-
-        ctx.stroke();
-
-    }
-
-    else {
-
-        ctx.moveTo(
-            size * .32,
-            size * .65
-        );
-
-        ctx.lineTo(
-            size * .68,
-            size * .65
-        );
-
-        ctx.stroke();
-
-    }
-
+    ctx.restore();
 }
 
 
-/* =====================================================
-   ANGRY FACE
-===================================================== */
-
-function drawAngry(
-    size,
-    power
-) {
+function line(x1,y1,x2,y2){
 
     ctx.beginPath();
 
-    ctx.moveTo(
-        size * .17,
-        size * .22
-    );
-
-    ctx.lineTo(
-        size * .45,
-        size * (
-            .30 + power * .02
-        )
-    );
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
 
     ctx.stroke();
-
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        size * .55,
-        size * (
-            .30 + power * .02
-        )
-    );
-
-    ctx.lineTo(
-        size * .83,
-        size * .22
-    );
-
-    ctx.stroke();
-
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        size * .22,
-        size * .68
-    );
-
-    ctx.lineTo(
-        size * .78,
-        size * .68
-    );
-
-    ctx.stroke();
-
-
-    /*
-       Very dangerous face:
-       teeth
-    */
-
-    if (power >= 2) {
-
-        ctx.fillStyle =
-            "#fff";
-
-
-        for (
-            let i = 0;
-            i < 4;
-            i++
-        ) {
-
-            const tx =
-                size * (
-                    .29 +
-                    i * .14
-                );
-
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                tx,
-                size * .68
-            );
-
-            ctx.lineTo(
-                tx + size * .07,
-                size * .68
-            );
-
-            ctx.lineTo(
-                tx + size * .035,
-                size * .82
-            );
-
-            ctx.closePath();
-
-            ctx.fill();
-
-        }
-
-    }
-
 }
 
 
-/* =====================================================
+/* =========================
    TONGUE
-===================================================== */
+========================= */
 
-function drawTongue(size) {
+function tongueAnimation(time){
 
-    if (!tongueVisible)
-        return;
+    if(time-tongueTimer>330){
 
-
-    ctx.strokeStyle =
-        "#ff3030";
-
-    ctx.lineWidth =
-        Math.max(
-            2,
-            size * .055
-        );
-
-
-    /*
-       Tongue बाहर
-    */
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        size * .50,
-        size * .65
-    );
-
-    ctx.lineTo(
-        size * .50,
-        size * .94
-    );
-
-    ctx.stroke();
-
-
-    /*
-       Tongue fork
-    */
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        size * .50,
-        size * .94
-    );
-
-    ctx.lineTo(
-        size * .42,
-        size
-    );
-
-    ctx.stroke();
-
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        size * .50,
-        size * .94
-    );
-
-    ctx.lineTo(
-        size * .58,
-        size
-    );
-
-    ctx.stroke();
-
-}
-
-
-/* =====================================================
-   TONGUE TIMER
-===================================================== */
-
-function animateTongue(time) {
-
-    if (
-        time - tongueTimer >
-        330
-    ) {
-
-        tongueVisible =
-            !tongueVisible;
-
-        tongueTimer =
-            time;
-
+        tongue=!tongue;
+        tongueTimer=time;
     }
-
 }
 
 
-/* =====================================================
-   GAME OVER
-===================================================== */
+/* =========================
+   PAUSE
+========================= */
 
-function endGame() {
+function togglePause(){
 
-    gameRunning = false;
+    if(!running)return;
 
-    collisionSound();
+    paused=!paused;
 
+    document.getElementById("pauseButton")
+        .textContent=
+        paused?"▶️ Resume":"⏸️ Pause";
+}
+
+document.getElementById("pauseButton")
+    .onclick=()=>{
+
+        audioStart();
+        togglePause();
+    };
+
+
+/* =========================
+   MODAL HELPERS
+========================= */
+
+function openModal(id){
 
     document
-        .getElementById("finalScore")
-        .textContent =
-        score;
+        .getElementById(id)
+        .classList
+        .add("show");
+}
 
-
-    document
-        .getElementById("finalLevel")
-        .textContent =
-        level;
-
+function closeModal(id){
 
     document
-        .getElementById("finalReward")
-        .textContent =
-        getReward();
+        .getElementById(id)
+        .classList
+        .remove("show");
+}
 
 
-    setTimeout(() => {
+document.querySelectorAll("[data-close]")
+.forEach(btn=>{
+
+    btn.onclick=()=>{
+
+        closeModal(
+            btn.dataset.close
+        );
+    };
+});
+
+
+/* =========================
+   FRUIT MENU
+========================= */
+
+document.getElementById("fruitButton")
+    .onclick=()=>{
+
+        audioStart();
+        openModal("fruitModal");
+    };
+
+
+document.querySelectorAll("[data-fruit]")
+.forEach(btn=>{
+
+    btn.onclick=()=>{
+
+        selectedFruit=
+            btn.dataset.fruit;
+
+        createFruit();
 
         document
-            .getElementById("gameOver")
-            .classList
-            .add("show");
+            .querySelectorAll("[data-fruit]")
+            .forEach(
+                b=>b.classList.remove("selected")
+            );
 
-    }, 180);
+        btn.classList.add("selected");
 
+        closeModal("fruitModal");
+
+        sound(700,.08);
+    };
+});
+
+
+/* =========================
+   FACE MENU
+========================= */
+
+document.getElementById("faceButton")
+    .onclick=()=>{
+
+        openModal("faceModal");
+    };
+
+
+document.querySelectorAll("[data-face]")
+.forEach(btn=>{
+
+    btn.onclick=()=>{
+
+        selectedFace=
+            btn.dataset.face;
+
+        document
+            .querySelectorAll("[data-face]")
+            .forEach(
+                b=>b.classList.remove("selected")
+            );
+
+        btn.classList.add("selected");
+
+        closeModal("faceModal");
+    };
+});
+
+
+/* =========================
+   SKIN MENU
+========================= */
+
+document.getElementById("skinButton")
+    .onclick=()=>{
+
+        openModal("skinModal");
+    };
+
+
+document.querySelectorAll("[data-skin]")
+.forEach(btn=>{
+
+    btn.onclick=()=>{
+
+        selectedSkin=
+            btn.dataset.skin;
+
+        closeModal("skinModal");
+
+        sound(500,.1);
+    };
+});
+
+
+/* =========================
+   GIFT
+========================= */
+
+function showGift(){
+
+    const rewards=[
+
+        "🎭 नया Face Unlock!",
+        "🐍 नया Skin Unlock!",
+        "🪙 +100 Coins!",
+        "🛡️ Shield Power!",
+        "👑 Golden Crown!"
+
+    ];
+
+    const reward=
+        rewards[
+            Math.floor(
+                Math.random()*rewards.length
+            )
+        ];
+
+    document.getElementById("rewardText")
+        .innerHTML=
+        `<b>${reward}</b><br><br>
+         100 Fruits पूरे करने पर
+         यह special gift मिला!`;
+
+    openModal("giftModal");
+
+    giftSound();
 }
 
 
-/* =====================================================
-   RESTART
-===================================================== */
+/* =========================
+   PLAY AGAIN
+========================= */
 
-function restartGame() {
+document.getElementById("again")
+    .onclick=()=>{
 
-    initAudio();
-
-    startGame();
-
-}
-
-
-document
-    .getElementById("restart")
-    .addEventListener(
-        "click",
-        restartGame
-    );
+        audioStart();
+        startGame();
+    };
 
 
-document
-    .getElementById("popupRestart")
-    .addEventListener(
-        "click",
-        restartGame
-    );
+/* =========================
+   GAME LOOP
+========================= */
 
+function loop(time){
 
-/* =====================================================
-   FACE SELECTOR
-===================================================== */
+    tongueAnimation(time);
 
-const facePanel =
-    document.getElementById(
-        "facePanel"
-    );
+    /*
+      Fixed speed.
+      कभी तेज नहीं होगी।
+    */
 
-
-document
-    .getElementById("faceButton")
-    .addEventListener(
-        "click",
-        () => {
-
-            facePanel
-                .classList
-                .add("show");
-
-        }
-    );
-
-
-document
-    .getElementById("closeFace")
-    .addEventListener(
-        "click",
-        () => {
-
-            facePanel
-                .classList
-                .remove("show");
-
-        }
-    );
-
-
-document
-    .querySelectorAll(".face")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                selectedFace =
-                    Number(
-                        button.dataset.face
-                    );
-
-
-                document
-                    .querySelectorAll(
-                        ".face"
-                    )
-                    .forEach(
-                        b =>
-                            b.classList
-                             .remove(
-                                 "selected"
-                             )
-                    );
-
-
-                button
-                    .classList
-                    .add("selected");
-
-
-                facePanel
-                    .classList
-                    .remove("show");
-
-            }
-        );
-
-    });
-
-
-/* =====================================================
-   MAIN GAME LOOP
-===================================================== */
-
-function gameLoop(time) {
-
-    animateTongue(time);
-
-
-    if (
-        gameRunning &&
-        time - lastMove >=
-        moveSpeed
-    ) {
+    if(
+        running &&
+        !paused &&
+        time-lastTime>=SPEED
+    ){
 
         update();
 
-        lastMove = time;
-
+        lastTime=time;
     }
-
 
     draw();
 
-
-    requestAnimationFrame(
-        gameLoop
-    );
-
+    requestAnimationFrame(loop);
 }
 
 
-/* =====================================================
-   START
-===================================================== */
+/* =========================
+   INIT
+========================= */
 
-resizeCanvas();
-
+resize();
 startGame();
 
-requestAnimationFrame(
-    gameLoop
-);
+requestAnimationFrame(loop);
 
 </script>
 
