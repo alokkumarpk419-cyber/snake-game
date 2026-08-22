@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-
 <title>Snake World</title>
 
 <style>
@@ -17,10 +16,10 @@
 body{
     min-height:100vh;
     background:
-        radial-gradient(circle at 15% 15%,#243b68 0,transparent 30%),
-        radial-gradient(circle at 85% 85%,#51295d 0,transparent 30%),
+        radial-gradient(circle at 10% 10%,#263b65,transparent 30%),
+        radial-gradient(circle at 90% 90%,#51254f,transparent 30%),
         #080b12;
-    color:white;
+    color:#fff;
     font-family:Arial,sans-serif;
     display:flex;
     justify-content:center;
@@ -30,20 +29,20 @@ body{
 .app{
     width:100%;
     max-width:620px;
-    padding:14px;
+    padding:15px;
     text-align:center;
 }
 
 h1{
-    font-size:34px;
     color:#ffd52b;
-    margin:4px 0;
+    font-size:32px;
+    margin:3px 0;
 }
 
-.sub{
-    color:#aeb8ca;
+.subtitle{
+    color:#aeb9cc;
     font-size:13px;
-    margin-bottom:10px;
+    margin-bottom:12px;
 }
 
 .stats{
@@ -55,10 +54,10 @@ h1{
 }
 
 .stat{
-    background:#171d2b;
-    border:1px solid #35435c;
-    padding:7px 11px;
-    border-radius:10px;
+    background:#171f2e;
+    border:1px solid #3c4b65;
+    border-radius:11px;
+    padding:8px 12px;
     font-size:13px;
 }
 
@@ -68,32 +67,26 @@ h1{
 
 .toolbar{
     display:flex;
-    flex-wrap:wrap;
     justify-content:center;
+    flex-wrap:wrap;
     gap:7px;
-    margin-bottom:10px;
-}
-
-button{
-    cursor:pointer;
-    user-select:none;
+    margin-bottom:12px;
 }
 
 .tool{
-    background:#172033;
-    color:white;
-    border:1px solid #4a5b78;
+    border:1px solid #52627b;
+    background:#202b3d;
+    color:#fff;
     padding:9px 12px;
     border-radius:10px;
     font-weight:bold;
+    cursor:pointer;
 }
 
-.tool:active,
-.control:active{
-    transform:scale(.94);
+.tool:active{
+    transform:scale(.95);
 }
 
-/* ONLY THIS AREA IS GREEN */
 .game{
     position:relative;
     width:min(92vw,500px);
@@ -103,17 +96,16 @@ button{
     border:5px solid #65ff76;
     border-radius:20px;
     overflow:hidden;
-    box-shadow:0 0 25px rgba(0,255,70,.18);
 }
 
 canvas{
+    display:block;
     width:100%;
     height:100%;
-    display:block;
 }
 
 .controls{
-    margin:12px auto 0;
+    margin:15px auto 0;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -130,12 +122,26 @@ canvas{
     height:52px;
     border-radius:14px;
     background:#202a3e;
-    color:white;
+    color:#fff;
     border:2px solid #657796;
     font-size:24px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-.popup,
+.control:active{
+    transform:scale(.94);
+}
+
+/* सिर्फ DOWN BUTTON थोड़ा नीचे */
+.control[data-dir="down"]{
+    transform:translateY(15px);
+}
+
+.control[data-dir="down"]:active{
+    transform:translateY(15px) scale(.94);
+}
+
 .modal{
     position:fixed;
     inset:0;
@@ -143,18 +149,17 @@ canvas{
     display:none;
     align-items:center;
     justify-content:center;
-    z-index:50;
+    z-index:100;
     padding:15px;
 }
 
-.popup.show,
 .modal.show{
     display:flex;
 }
 
 .card{
     width:min(94vw,470px);
-    max-height:85vh;
+    max-height:86vh;
     overflow:auto;
     background:#111827;
     border:2px solid #ffd52b;
@@ -174,58 +179,69 @@ canvas{
 }
 
 .choice{
-    min-height:58px;
+    min-height:60px;
     background:#202b40;
-    border:1px solid #52627c;
+    color:#fff;
+    border:1px solid #52627b;
     border-radius:11px;
-    color:white;
     font-size:25px;
-    padding:7px;
+    cursor:pointer;
 }
 
 .choice small{
     display:block;
-    font-size:10px;
+    font-size:9px;
     margin-top:3px;
 }
 
 .choice.selected{
     border:2px solid #ffd52b;
-    background:#37445b;
 }
 
 .close{
-    margin-top:16px;
-    padding:9px 22px;
+    margin-top:17px;
     border:0;
-    border-radius:10px;
     background:#ffd52b;
     color:#111;
+    padding:10px 22px;
+    border-radius:10px;
     font-weight:bold;
+    cursor:pointer;
 }
 
-.giftIcon{
-    font-size:75px;
-    margin:8px;
+.bigGift{
+    font-size:80px;
+    margin:10px;
 }
 
-.reward{
+.rewardBox{
     background:#202b40;
-    border-radius:12px;
+    border-radius:13px;
     padding:15px;
     line-height:1.7;
 }
 
-@media(max-width:430px){
-    h1{font-size:28px}
-    .game{
-        width:92vw;
-        height:92vw;
-    }
-    .control{
-        width:61px;
-        height:48px;
-    }
+.shopItem{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#202b40;
+    padding:12px;
+    border-radius:12px;
+    margin:8px 0;
+}
+
+.buy{
+    border:0;
+    background:#ffd52b;
+    color:#111;
+    padding:8px 12px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.danger{
+    color:#ff5d5d;
 }
 </style>
 </head>
@@ -235,54 +251,127 @@ canvas{
 <div class="app">
 
 <h1>🐍 SNAKE WORLD</h1>
-<div class="sub">Eat • Grow • Collect • Unlock</div>
+
+<div class="subtitle">
+Eat • Grow • Collect • Unlock
+</div>
 
 <div class="stats">
-    <div class="stat">Score <b id="score">0</b></div>
-    <div class="stat">🍎 <b id="fruitCount">0</b></div>
-    <div class="stat">🪙 <b id="coins">0</b></div>
-    <div class="stat">🏆 <b id="best">0</b></div>
-    <div class="stat">🎁 <b id="gifts">0</b></div>
+
+<div class="stat">
+Score <b id="score">0</b>
 </div>
+
+<div class="stat">
+🍎 <b id="fruitCount">0</b>
+</div>
+
+<div class="stat">
+🪙 <b id="coins">0</b>
+</div>
+
+<div class="stat">
+🏆 <b id="best">0</b>
+</div>
+
+<div class="stat">
+🎁 <b id="gifts">0</b>
+</div>
+
+</div>
+
 
 <div class="toolbar">
-    <button class="tool" id="fruitButton">🍎 Fruits</button>
-    <button class="tool" id="faceButton">🎭 Face</button>
-    <button class="tool" id="skinButton">🐍 Skin</button>
-    <button class="tool" id="pauseButton">⏸️ Pause</button>
+
+<button class="tool" id="fruitButton">
+🍎 Fruits
+</button>
+
+<button class="tool" id="faceButton">
+🎭 Face
+</button>
+
+<button class="tool" id="giftButton">
+🎁 Gifts
+</button>
+
+<button class="tool" id="soundButton">
+🔊 Sound ON
+</button>
+
 </div>
+
 
 <div class="game">
-    <canvas id="canvas"></canvas>
 
-    <div class="popup" id="gameOver">
-        <div class="card">
-            <h2>💥 GAME OVER</h2>
+<canvas id="canvas"></canvas>
 
-            <p>
-                Score: <b id="finalScore">0</b><br>
-                Fruits: <b id="finalFruits">0</b>
-            </p>
-
-            <button class="close" id="again">
-                🎮 PLAY AGAIN
-            </button>
-        </div>
-    </div>
 </div>
 
-<!-- Emoji control layout -->
+
+<!-- CONTROLS -->
+
 <div class="controls">
 
-    <div class="row">
-        <button class="control" data-dir="up">⬆️</button>
-    </div>
+<div class="row">
 
-    <div class="row">
-        <button class="control" data-dir="left">⬅️</button>
-        <button class="control" data-dir="down">⬇️</button>
-        <button class="control" data-dir="right">➡️</button>
-    </div>
+<button class="control" data-dir="up">
+⬆️
+</button>
+
+</div>
+
+<div class="row">
+
+<button class="control" data-dir="left">
+⬅️
+</button>
+
+<button class="control" data-dir="down">
+⬇️
+</button>
+
+<button class="control" data-dir="right">
+➡️
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- GAME OVER -->
+
+<div class="modal" id="gameOverModal">
+
+<div class="card">
+
+<h2>💥 GAME OVER</h2>
+
+<p>
+Score:
+<b id="finalScore">0</b>
+</p>
+
+<p>
+Fruits:
+<b id="finalFruits">0</b>
+</p>
+
+<p>
+🪙 Saved Coins:
+<b id="finalCoins">0</b>
+</p>
+
+<p class="danger">
+तुम्हारे Coins सुरक्षित हैं।
+</p>
+
+<button class="close" id="playAgain">
+🎮 PLAY AGAIN
+</button>
 
 </div>
 
@@ -292,492 +381,901 @@ canvas{
 <!-- FRUIT MENU -->
 
 <div class="modal" id="fruitModal">
-    <div class="card">
 
-        <h2>🍎 अपना Fruit चुनो</h2>
+<div class="card">
 
-        <div class="grid">
+<h2>🍎 10 Fruits</h2>
 
-            <button class="choice" data-fruit="🍎">
-                🍎<small>सेब</small>
-            </button>
+<div class="grid">
 
-            <button class="choice" data-fruit="🍊">
-                🍊<small>संतरा</small>
-            </button>
+<button class="choice" data-fruit="🍎">
+🍎<small>Apple</small>
+</button>
 
-            <button class="choice" data-fruit="🍇">
-                🍇<small>अंगूर</small>
-            </button>
+<button class="choice" data-fruit="🍊">
+🍊<small>Orange</small>
+</button>
 
-            <button class="choice" data-fruit="🍉">
-                🍉<small>तरबूज</small>
-            </button>
+<button class="choice" data-fruit="🍇">
+🍇<small>Grapes</small>
+</button>
 
-            <button class="choice" data-fruit="🍓">
-                🍓<small>स्ट्रॉबेरी</small>
-            </button>
+<button class="choice" data-fruit="🍉">
+🍉<small>Watermelon</small>
+</button>
 
-            <button class="choice" data-fruit="🍌">
-                🍌<small>केला</small>
-            </button>
+<button class="choice" data-fruit="🍓">
+🍓<small>Strawberry</small>
+</button>
 
-            <button class="choice" data-fruit="🍍">
-                🍍<small>अनानास</small>
-            </button>
+<button class="choice" data-fruit="🍌">
+🍌<small>Banana</small>
+</button>
 
-            <button class="choice" data-fruit="🥭">
-                🥭<small>आम</small>
-            </button>
+<button class="choice" data-fruit="🍍">
+🍍<small>Pineapple</small>
+</button>
 
-            <button class="choice" data-fruit="🍒">
-                🍒<small>चेरी</small>
-            </button>
+<button class="choice" data-fruit="🥭">
+🥭<small>Mango</small>
+</button>
 
-            <button class="choice" data-fruit="🥝">
-                🥝<small>कीवी</small>
-            </button>
+<button class="choice" data-fruit="🍒">
+🍒<small>Cherry</small>
+</button>
 
-        </div>
+<button class="choice" data-fruit="🥝">
+🥝<small>Kiwi</small>
+</button>
 
-        <button class="close" data-close="fruitModal">
-            बंद करें
-        </button>
+</div>
 
-    </div>
+<button class="close" data-close="fruitModal">
+बंद करें
+</button>
+
+</div>
+
 </div>
 
 
 <!-- FACE MENU -->
 
 <div class="modal" id="faceModal">
-    <div class="card">
 
-        <h2>🎭 Snake Emotion</h2>
+<div class="card">
 
-        <div class="grid">
+<h2>🎭 Snake Faces</h2>
 
-            <button class="choice" data-face="normal">🙂<small>Normal</small></button>
-            <button class="choice" data-face="happy">😄<small>Happy</small></button>
-            <button class="choice" data-face="cool">😎<small>Cool</small></button>
-            <button class="choice" data-face="angry">😡<small>Angry</small></button>
-            <button class="choice" data-face="danger">😈<small>Danger</small></button>
+<div class="grid">
 
-            <button class="choice" data-face="sad">😢<small>Sad</small></button>
-            <button class="choice" data-face="cry">😭<small>Crying</small></button>
-            <button class="choice" data-face="scared">😱<small>Scared</small></button>
-            <button class="choice" data-face="sleep">😴<small>Sleepy</small></button>
-            <button class="choice" data-face="crazy">🤪<small>Crazy</small></button>
+<button class="choice" data-face="🙂">🙂<small>Normal</small></button>
+<button class="choice" data-face="😄">😄<small>Happy</small></button>
+<button class="choice" data-face="😎">😎<small>Cool</small></button>
+<button class="choice" data-face="😡">😡<small>Angry</small></button>
+<button class="choice" data-face="😈">😈<small>Danger</small></button>
 
-            <button class="choice" data-face="laugh">😂<small>Laugh</small></button>
-            <button class="choice" data-face="innocent">🥺<small>Innocent</small></button>
-            <button class="choice" data-face="excited">🤩<small>Excited</small></button>
-            <button class="choice" data-face="mad">😤<small>Mad</small></button>
-            <button class="choice" data-face="angel">😇<small>Angel</small></button>
+<button class="choice" data-face="😢">😢<small>Sad</small></button>
+<button class="choice" data-face="😭">😭<small>Crying</small></button>
+<button class="choice" data-face="😱">😱<small>Scared</small></button>
+<button class="choice" data-face="😴">😴<small>Sleepy</small></button>
+<button class="choice" data-face="🤪">🤪<small>Crazy</small></button>
 
-        </div>
+<button class="choice" data-face="😂">😂<small>Laugh</small></button>
+<button class="choice" data-face="🥺">🥺<small>Innocent</small></button>
+<button class="choice" data-face="🤩">🤩<small>Excited</small></button>
+<button class="choice" data-face="😤">😤<small>Mad</small></button>
+<button class="choice" data-face="😇">😇<small>Angel</small></button>
 
-        <button class="close" data-close="faceModal">
-            बंद करें
-        </button>
+</div>
 
-    </div>
+<button class="close" data-close="faceModal">
+बंद करें
+</button>
+
+</div>
+
 </div>
 
 
-<!-- SKIN MENU -->
-
-<div class="modal" id="skinModal">
-    <div class="card">
-
-        <h2>🐍 Snake Skin</h2>
-
-        <div class="grid">
-
-            <button class="choice" data-skin="yellow">🟡<small>Yellow</small></button>
-            <button class="choice" data-skin="blue">🔵<small>Blue</small></button>
-            <button class="choice" data-skin="red">🔴<small>Fire</small></button>
-            <button class="choice" data-skin="purple">🟣<small>Magic</small></button>
-            <button class="choice" data-skin="rainbow">🌈<small>Rainbow</small></button>
-
-        </div>
-
-        <button class="close" data-close="skinModal">
-            बंद करें
-        </button>
-
-    </div>
-</div>
-
-
-<!-- GIFT -->
+<!-- GIFT SHOP -->
 
 <div class="modal" id="giftModal">
-    <div class="card" style="text-align:center">
 
-        <h2>🎁 GIFT UNLOCKED!</h2>
+<div class="card">
 
-        <div class="giftIcon">🎁</div>
+<h2>🎁 Gift Shop</h2>
 
-        <div class="reward" id="rewardText"></div>
+<p>
+तुम्हारे Coins:
+🪙 <b id="shopCoins">0</b>
+</p>
 
-        <button class="close" data-close="giftModal">
-            खोलें / बंद करें
-        </button>
+<div class="shopItem">
 
-    </div>
+<span>👑 Golden Crown</span>
+
+<button class="buy" data-cost="100">
+100 🪙
+</button>
+
+</div>
+
+<div class="shopItem">
+
+<span>⚡ Speed Trail</span>
+
+<button class="buy" data-cost="150">
+150 🪙
+</button>
+
+</div>
+
+<div class="shopItem">
+
+<span>💎 Diamond Face</span>
+
+<button class="buy" data-cost="250">
+250 🪙
+</button>
+
+</div>
+
+<div class="shopItem">
+
+<span>🛡️ Shield</span>
+
+<button class="buy" data-cost="500">
+500 🪙
+</button>
+
+</div>
+
+<button class="close" data-close="giftModal">
+बंद करें
+</button>
+
+</div>
+
+</div>
+
+
+<!-- 100 FRUIT GIFT -->
+
+<div class="modal" id="rewardModal">
+
+<div class="card" style="text-align:center">
+
+<h2>🎁 SPECIAL GIFT!</h2>
+
+<div class="bigGift">
+🎁
+</div>
+
+<div class="rewardBox" id="rewardText"></div>
+
+<button class="close" data-close="rewardModal">
+बहुत बढ़िया!
+</button>
+
+</div>
+
 </div>
 
 
 <script>
 
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
+/* ==========================================
+   CANVAS
+========================================== */
 
-const GRID=20;
+const canvas =
+document.getElementById("canvas");
+
+const ctx =
+canvas.getContext("2d");
+
+const GRID = 20;
+
 
 /*
- IMPORTANT:
- Speed हमेशा same रहेगी.
- Score बढ़ने पर speed नहीं बढ़ेगी.
+   Speed जानबूझकर normal/slow रखी है.
+   यह हर level पर तेज नहीं होगी.
 */
 
-const SPEED=170;
+const SPEED = 180;
 
-let tile=20;
+let tile = 20;
 
-let snake=[];
-let fruit={x:10,y:10};
+let snake = [];
 
-let direction={x:1,y:0};
-let nextDirection={x:1,y:0};
+let fruit = {
+    x:10,
+    y:10
+};
 
-let score=0;
-let fruitCount=0;
-let coins=0;
-let gifts=0;
+let direction = {
+    x:1,
+    y:0
+};
 
-let selectedFruit="🍎";
+let nextDirection = {
+    x:1,
+    y:0
+};
 
-let selectedFace="normal";
-let selectedSkin="yellow";
+let score = 0;
 
-let running=true;
-let paused=false;
+let fruitCount = 0;
 
-let lastTime=0;
+let gifts = 0;
 
-let tongue=false;
-let tongueTimer=0;
+let running = true;
 
-let best=
-    Number(localStorage.getItem("snakeBest")||0);
+let paused = false;
 
-document.getElementById("best").textContent=best;
+let lastTime = 0;
+
+let selectedFruit = "🍎";
+
+let selectedFace = "😈";
+
+let tongue = false;
+
+let soundEnabled = true;
 
 
-/* =========================
-   AUDIO
-========================= */
+/* ==========================================
+   🪙 PERMANENT COIN SAVE
+========================================== */
 
-let audioContext=null;
 
-function audioStart(){
+/*
+   Game शुरू होते ही saved coins load.
+*/
+
+let coins =
+Number(
+    localStorage.getItem("snakeWorldCoins") || 0
+);
+
+
+/*
+   Coins को permanent save करना.
+*/
+
+function saveCoins(){
+
+    localStorage.setItem(
+        "snakeWorldCoins",
+        String(coins)
+    );
+
+}
+
+
+/*
+   Coins बढ़ाने का function.
+*/
+
+function addCoins(amount){
+
+    coins += amount;
+
+    saveCoins();
+
+    updateUI();
+
+}
+
+
+/*
+   Browser refresh/close पर save.
+*/
+
+window.addEventListener(
+    "beforeunload",
+    saveCoins
+);
+
+
+/*
+   Mobile में app/tab छोड़ने पर save.
+*/
+
+document.addEventListener(
+    "visibilitychange",
+    function(){
+
+        if(
+            document.visibilityState === "hidden"
+        ){
+
+            saveCoins();
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   BEST SCORE
+========================================== */
+
+let best =
+Number(
+    localStorage.getItem("snakeBest") || 0
+);
+
+
+/* ==========================================
+   🔊 BUILT-IN SOUND ENGINE
+========================================== */
+
+
+/*
+   कोई external MP3/WAV file नहीं.
+   Sound browser के अंदर generate होगा.
+*/
+
+let audioContext = null;
+
+
+function startAudio(){
+
+    if(!soundEnabled)
+        return;
 
     if(!audioContext){
 
-        audioContext=
-            new (window.AudioContext||
-                 window.webkitAudioContext)();
+        const AudioCtx =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+        if(AudioCtx){
+
+            audioContext =
+                new AudioCtx();
+
+        }
 
     }
 
-    if(audioContext.state==="suspended"){
+    if(
+        audioContext &&
+        audioContext.state === "suspended"
+    ){
+
         audioContext.resume();
+
     }
+
 }
 
-function sound(freq,duration,type="sine",volume=.11){
 
-    audioStart();
+/*
+   Basic tone.
+*/
 
-    const osc=audioContext.createOscillator();
-    const gain=audioContext.createGain();
+function tone(
+    frequency,
+    duration,
+    type="sine",
+    volume=.12,
+    delay=0
+){
 
-    osc.type=type;
-    osc.frequency.value=freq;
+    if(!soundEnabled)
+        return;
+
+    startAudio();
+
+    if(!audioContext)
+        return;
+
+
+    const oscillator =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+
+    oscillator.type = type;
+
+    oscillator.frequency.setValueAtTime(
+        frequency,
+        audioContext.currentTime + delay
+    );
+
 
     gain.gain.setValueAtTime(
-        volume,
-        audioContext.currentTime
+        .001,
+        audioContext.currentTime + delay
     );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        volume,
+        audioContext.currentTime +
+        delay +
+        .015
+    );
+
 
     gain.gain.exponentialRampToValueAtTime(
         .001,
-        audioContext.currentTime+duration
+        audioContext.currentTime +
+        delay +
+        duration
     );
 
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
 
-    osc.start();
+    oscillator.connect(gain);
 
-    osc.stop(
-        audioContext.currentTime+duration
+    gain.connect(
+        audioContext.destination
     );
+
+
+    oscillator.start(
+        audioContext.currentTime +
+        delay
+    );
+
+
+    oscillator.stop(
+        audioContext.currentTime +
+        delay +
+        duration +
+        .02
+    );
+
 }
 
 
-/* Fruit: TUIING-TUIING */
+/*
+   🍎 FRUIT SOUND
+   "टुइंग-टुइंग" जैसा दो-tone effect.
+*/
 
-function fruitSound(){
+function playFruitSound(){
 
-    sound(900,.10,"triangle",.13);
-
-    setTimeout(
-        ()=>sound(1300,.13,"triangle",.13),
-        100
+    tone(
+        880,
+        .12,
+        "triangle",
+        .16,
+        0
     );
+
+    tone(
+        1320,
+        .16,
+        "triangle",
+        .15,
+        .10
+    );
+
 }
 
 
-/* Wall: THAK-THAK */
+/*
+   💥 WALL/BODY SOUND
+*/
 
-function wallSound(){
+function playCrashSound(){
 
-    sound(110,.14,"square",.14);
-
-    setTimeout(
-        ()=>sound(65,.16,"square",.13),
-        130
+    tone(
+        120,
+        .16,
+        "square",
+        .16,
+        0
     );
+
+    tone(
+        70,
+        .22,
+        "square",
+        .13,
+        .13
+    );
+
 }
 
 
-/* Gift: TRONG */
+/*
+   🎁 GIFT SOUND
+*/
 
-function giftSound(){
+function playGiftSound(){
 
-    sound(260,.13,"triangle",.12);
-
-    setTimeout(
-        ()=>sound(520,.16,"triangle",.12),
-        110
+    tone(
+        523,
+        .12,
+        "triangle",
+        .13,
+        0
     );
 
-    setTimeout(
-        ()=>sound(780,.18,"triangle",.12),
-        230
+    tone(
+        659,
+        .12,
+        "triangle",
+        .13,
+        .12
     );
+
+    tone(
+        880,
+        .18,
+        "triangle",
+        .14,
+        .24
+    );
+
 }
 
 
-/* =========================
+/*
+   🪙 COIN PURCHASE SOUND
+*/
+
+function playCoinSound(){
+
+    tone(
+        700,
+        .10,
+        "sine",
+        .12,
+        0
+    );
+
+    tone(
+        1000,
+        .13,
+        "sine",
+        .12,
+        .10
+    );
+
+}
+
+
+/* ==========================================
    RESIZE
-========================= */
+========================================== */
 
 function resize(){
 
-    const r=canvas.getBoundingClientRect();
+    const rect =
+        canvas.getBoundingClientRect();
 
-    canvas.width=r.width;
-    canvas.height=r.height;
+    canvas.width =
+        rect.width;
 
-    tile=canvas.width/GRID;
+    canvas.height =
+        rect.height;
+
+    tile =
+        canvas.width / GRID;
 
     draw();
+
 }
 
-window.addEventListener("resize",resize);
+window.addEventListener(
+    "resize",
+    resize
+);
 
 
-/* =========================
-   START
-========================= */
+/* ==========================================
+   START GAME
+========================================== */
 
 function startGame(){
 
-    snake=[
+    snake = [
+
         {x:10,y:10},
         {x:9,y:10},
         {x:8,y:10},
         {x:7,y:10}
+
     ];
 
-    direction={x:1,y:0};
-    nextDirection={x:1,y:0};
 
-    score=0;
-    fruitCount=0;
+    direction = {
+        x:1,
+        y:0
+    };
 
-    running=true;
-    paused=false;
+
+    nextDirection = {
+        x:1,
+        y:0
+    };
+
+
+    score = 0;
+
+    fruitCount = 0;
+
+    running = true;
+
+    paused = false;
+
+
+    /*
+       IMPORTANT:
+       यहाँ coins को zero नहीं किया गया.
+    */
 
     createFruit();
 
     document
-        .getElementById("gameOver")
+        .getElementById("gameOverModal")
         .classList.remove("show");
 
-    document
-        .getElementById("pauseButton")
-        .textContent="⏸️ Pause";
-
     updateUI();
+
 }
 
 
-/* =========================
-   ONE FRUIT ONLY
-========================= */
+/* ==========================================
+   FRUIT
+========================================== */
 
 function createFruit(){
 
-    let valid=false;
+    let valid = false;
+
 
     while(!valid){
 
-        fruit={
-            x:Math.floor(Math.random()*GRID),
-            y:Math.floor(Math.random()*GRID)
+        fruit = {
+
+            x:
+                Math.floor(
+                    Math.random() * GRID
+                ),
+
+            y:
+                Math.floor(
+                    Math.random() * GRID
+                )
+
         };
 
-        valid=!snake.some(
-            s=>s.x===fruit.x &&
-               s.y===fruit.y
-        );
+
+        valid =
+            !snake.some(
+                part =>
+                    part.x === fruit.x &&
+                    part.y === fruit.y
+            );
+
     }
+
 }
 
 
-/* =========================
+/* ==========================================
    DIRECTION
-========================= */
+========================================== */
 
 function changeDirection(x,y){
 
-    if(!running||paused)return;
+    if(!running || paused)
+        return;
+
 
     if(
-        x===-direction.x &&
-        y===-direction.y
-    )return;
+        x === -direction.x &&
+        y === -direction.y
+    ){
 
-    nextDirection={x,y};
-}
-
-
-/* Keyboard */
-
-document.addEventListener("keydown",e=>{
-
-    if(e.key==="ArrowUp")
-        changeDirection(0,-1);
-
-    if(e.key==="ArrowDown")
-        changeDirection(0,1);
-
-    if(e.key==="ArrowLeft")
-        changeDirection(-1,0);
-
-    if(e.key==="ArrowRight")
-        changeDirection(1,0);
-
-    if(e.key===" "||e.key.toLowerCase()==="p")
-        togglePause();
-});
-
-
-/* Buttons */
-
-document.querySelectorAll(".control")
-.forEach(btn=>{
-
-    btn.addEventListener("click",()=>{
-
-        audioStart();
-
-        const d=btn.dataset.dir;
-
-        if(d==="up")changeDirection(0,-1);
-        if(d==="down")changeDirection(0,1);
-        if(d==="left")changeDirection(-1,0);
-        if(d==="right")changeDirection(1,0);
-
-    });
-});
-
-
-/* =========================
-   SWIPE
-========================= */
-
-let sx=0,sy=0;
-
-canvas.addEventListener("touchstart",e=>{
-
-    sx=e.changedTouches[0].clientX;
-    sy=e.changedTouches[0].clientY;
-
-},{passive:true});
-
-
-canvas.addEventListener("touchend",e=>{
-
-    const x=e.changedTouches[0].clientX;
-    const y=e.changedTouches[0].clientY;
-
-    const dx=x-sx;
-    const dy=y-sy;
-
-    if(Math.abs(dx)<20&&Math.abs(dy)<20)return;
-
-    if(Math.abs(dx)>Math.abs(dy)){
-
-        changeDirection(
-            dx>0?1:-1,
-            0
-        );
-
-    }else{
-
-        changeDirection(
-            0,
-            dy>0?1:-1
-        );
+        return;
 
     }
 
-},{passive:true});
+
+    nextDirection = {
+        x:x,
+        y:y
+    };
+
+}
 
 
-/* =========================
-   UPDATE
-========================= */
+/* ==========================================
+   KEYBOARD
+========================================== */
+
+document.addEventListener(
+    "keydown",
+    function(e){
+
+        if(e.key === "ArrowUp")
+            changeDirection(0,-1);
+
+        if(e.key === "ArrowDown")
+            changeDirection(0,1);
+
+        if(e.key === "ArrowLeft")
+            changeDirection(-1,0);
+
+        if(e.key === "ArrowRight")
+            changeDirection(1,0);
+
+    }
+);
+
+
+/* ==========================================
+   CONTROL BUTTONS
+========================================== */
+
+document
+    .querySelectorAll(".control")
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                function(){
+
+                    startAudio();
+
+                    const d =
+                        button.dataset.dir;
+
+                    if(d === "up")
+                        changeDirection(0,-1);
+
+                    if(d === "down")
+                        changeDirection(0,1);
+
+                    if(d === "left")
+                        changeDirection(-1,0);
+
+                    if(d === "right")
+                        changeDirection(1,0);
+
+                }
+            );
+
+        }
+    );
+
+
+/* ==========================================
+   TOUCH SWIPE
+========================================== */
+
+let touchStartX = 0;
+
+let touchStartY = 0;
+
+
+canvas.addEventListener(
+    "touchstart",
+    function(e){
+
+        touchStartX =
+            e.changedTouches[0].clientX;
+
+        touchStartY =
+            e.changedTouches[0].clientY;
+
+    },
+    {passive:true}
+);
+
+
+canvas.addEventListener(
+    "touchend",
+    function(e){
+
+        const x =
+            e.changedTouches[0].clientX;
+
+        const y =
+            e.changedTouches[0].clientY;
+
+        const dx =
+            x - touchStartX;
+
+        const dy =
+            y - touchStartY;
+
+
+        if(
+            Math.abs(dx) < 20 &&
+            Math.abs(dy) < 20
+        ){
+
+            return;
+
+        }
+
+
+        if(
+            Math.abs(dx) >
+            Math.abs(dy)
+        ){
+
+            changeDirection(
+                dx > 0 ? 1 : -1,
+                0
+            );
+
+        }
+        else{
+
+            changeDirection(
+                0,
+                dy > 0 ? 1 : -1
+            );
+
+        }
+
+    },
+    {passive:true}
+);
+
+
+/* ==========================================
+   UPDATE GAME
+========================================== */
 
 function update(){
 
-    if(!running||paused)return;
+    if(
+        !running ||
+        paused
+    ){
 
-    direction=nextDirection;
+        return;
 
-    const head={
-        x:snake[0].x+direction.x,
-        y:snake[0].y+direction.y
+    }
+
+
+    direction =
+        nextDirection;
+
+
+    const head = {
+
+        x:
+            snake[0].x +
+            direction.x,
+
+        y:
+            snake[0].y +
+            direction.y
+
     };
 
 
     /* WALL */
 
     if(
-        head.x<0 ||
-        head.x>=GRID ||
-        head.y<0 ||
-        head.y>=GRID
+
+        head.x < 0 ||
+        head.x >= GRID ||
+        head.y < 0 ||
+        head.y >= GRID
+
     ){
 
         gameOver();
+
         return;
+
     }
 
 
@@ -785,377 +1283,448 @@ function update(){
 
     if(
         snake.some(
-            s=>s.x===head.x &&
-               s.y===head.y
+            part =>
+                part.x === head.x &&
+                part.y === head.y
         )
     ){
 
         gameOver();
+
         return;
+
     }
 
 
     snake.unshift(head);
 
 
-    /* FRUIT */
+    /* ==================================
+       🍎 FRUIT EAT
+    ================================== */
 
     if(
-        head.x===fruit.x &&
-        head.y===fruit.y
+
+        head.x === fruit.x &&
+        head.y === fruit.y
+
     ){
 
-        score+=10;
-        fruitCount++;
-        coins+=2;
+        score += 10;
 
-        fruitSound();
+        fruitCount++;
+
 
         /*
-          IMPORTANT:
-          Snake pop नहीं होगा,
-          इसलिए Snake बड़ा होगा.
+           🪙 Coin immediately save.
         */
+
+        addCoins(2);
+
+
+        /*
+           🔊 टुइंग-टुइंग
+        */
+
+        playFruitSound();
+
 
         createFruit();
 
-        if(fruitCount%100===0){
+
+        /*
+           हर 100 fruits पर special gift.
+        */
+
+        if(
+            fruitCount % 100 === 0
+        ){
 
             gifts++;
-            coins+=50;
 
-            showGift();
+            addCoins(50);
+
+            showSpecialGift();
 
         }
 
+
         saveBest();
 
-    }else{
+    }
+    else{
 
         /*
-          Fruit नहीं खाया तो
-          tail हटेगा.
+           Fruit नहीं खाया तो tail हटेगी.
         */
 
         snake.pop();
+
     }
 
+
     updateUI();
+
 }
 
 
-/* =========================
+/* ==========================================
    GAME OVER
-========================= */
+========================================== */
 
 function gameOver(){
 
-    running=false;
+    running = false;
 
-    wallSound();
 
-    saveBest();
+    /*
+       Coins हमेशा सुरक्षित.
+    */
 
-    document.getElementById("finalScore")
-        .textContent=score;
+    saveCoins();
 
-    document.getElementById("finalFruits")
-        .textContent=fruitCount;
 
-    setTimeout(()=>{
+    playCrashSound();
 
-        document
-            .getElementById("gameOver")
-            .classList.add("show");
 
-    },180);
+    document.getElementById(
+        "finalScore"
+    ).textContent = score;
+
+
+    document.getElementById(
+        "finalFruits"
+    ).textContent = fruitCount;
+
+
+    document.getElementById(
+        "finalCoins"
+    ).textContent = coins;
+
+
+    setTimeout(
+        function(){
+
+            document
+                .getElementById(
+                    "gameOverModal"
+                )
+                .classList.add("show");
+
+        },
+        180
+    );
+
 }
 
 
-/* =========================
-   SAVE
-========================= */
+/* ==========================================
+   BEST SCORE
+========================================== */
 
 function saveBest(){
 
-    if(score>best){
+    if(score > best){
 
-        best=score;
+        best = score;
 
         localStorage.setItem(
             "snakeBest",
-            best
+            String(best)
         );
+
     }
+
 }
 
 
-/* =========================
+/* ==========================================
    UI
-========================= */
+========================================== */
 
 function updateUI(){
 
-    document.getElementById("score")
-        .textContent=score;
+    document.getElementById(
+        "score"
+    ).textContent = score;
 
-    document.getElementById("fruitCount")
-        .textContent=fruitCount;
 
-    document.getElementById("coins")
-        .textContent=coins;
+    document.getElementById(
+        "fruitCount"
+    ).textContent = fruitCount;
 
-    document.getElementById("best")
-        .textContent=best;
 
-    document.getElementById("gifts")
-        .textContent=gifts;
+    document.getElementById(
+        "coins"
+    ).textContent = coins;
+
+
+    document.getElementById(
+        "best"
+    ).textContent = best;
+
+
+    document.getElementById(
+        "shopCoins"
+    ).textContent = coins;
+
 }
 
 
-/* =========================
+/* ==========================================
    DRAW
-========================= */
+========================================== */
 
 function draw(){
 
     ctx.clearRect(
-        0,0,
+        0,
+        0,
         canvas.width,
         canvas.height
     );
 
 
-    /* Green surface */
+    /*
+       Snake play area हमेशा green.
+    */
 
-    ctx.fillStyle="#138a2e";
+    ctx.fillStyle = "#138a2e";
 
     ctx.fillRect(
-        0,0,
+        0,
+        0,
         canvas.width,
         canvas.height
     );
 
-
-    /* very subtle grid */
-
-    ctx.strokeStyle="rgba(255,255,255,.035)";
-
-    for(let i=0;i<=GRID;i++){
-
-        ctx.beginPath();
-
-        ctx.moveTo(i*tile,0);
-        ctx.lineTo(i*tile,canvas.height);
-
-        ctx.stroke();
-
-        ctx.beginPath();
-
-        ctx.moveTo(0,i*tile);
-        ctx.lineTo(canvas.width,i*tile);
-
-        ctx.stroke();
-    }
-
-
-    /* Fruit */
 
     drawFruit();
 
 
-    /* Snake */
-
     snake.forEach(
-        (part,index)=>
-            drawSnake(part,index)
+        function(part,index){
+
+            drawSnake(
+                part,
+                index
+            );
+
+        }
     );
+
 }
 
 
-/* =========================
-   FRUIT
-========================= */
+/* ==========================================
+   FRUIT DRAW
+========================================== */
 
 function drawFruit(){
 
-    const x=
-        fruit.x*tile+tile/2;
+    const x =
+        fruit.x * tile +
+        tile / 2;
 
-    const y=
-        fruit.y*tile+tile/2;
+    const y =
+        fruit.y * tile +
+        tile / 2;
 
-    ctx.font=`${tile*.72}px Arial`;
 
-    ctx.textAlign="center";
-    ctx.textBaseline="middle";
+    ctx.font =
+        `${tile * .72}px Arial`;
+
+    ctx.textAlign = "center";
+
+    ctx.textBaseline = "middle";
+
 
     ctx.fillText(
         selectedFruit,
         x,
         y
     );
+
 }
 
 
-/* =========================
-   SNAKE COLOUR
-========================= */
+/* ==========================================
+   SNAKE
+========================================== */
 
-function snakeColor(index){
+function drawSnake(
+    part,
+    index
+){
 
-    if(selectedSkin==="yellow")
-        return "#ffd21c";
+    const x =
+        part.x * tile + 1;
 
-    if(selectedSkin==="blue")
-        return "#27b8ed";
+    const y =
+        part.y * tile + 1;
 
-    if(selectedSkin==="red")
-        return "#ef402b";
-
-    if(selectedSkin==="purple")
-        return "#b451df";
-
-    if(selectedSkin==="rainbow"){
-
-        const c=[
-            "#ff5252",
-            "#ffca28",
-            "#66bb6a",
-            "#29b6f6",
-            "#ab47bc"
-        ];
-
-        return c[index%c.length];
-    }
-
-    return "#ffd21c";
-}
+    const size =
+        tile - 2;
 
 
-/* =========================
-   SNAKE BODY
-========================= */
+    /*
+       Snake yellow.
+    */
 
-function drawSnake(p,index){
+    ctx.fillStyle =
+        "#ffd21c";
 
-    const x=p.x*tile+1;
-    const y=p.y*tile+1;
-    const s=tile-2;
-
-    ctx.fillStyle=snakeColor(index);
 
     roundRect(
-        x,y,s,s,5
+        x,
+        y,
+        size,
+        size,
+        5
     );
 
-    if(index===0){
+
+    if(index === 0){
 
         drawHead(
-            x,y,s
+            x,
+            y,
+            size
         );
+
     }
+
 }
 
 
-function roundRect(x,y,w,h,r){
+/* ==========================================
+   ROUND RECT
+========================================== */
+
+function roundRect(
+    x,
+    y,
+    w,
+    h,
+    r
+){
 
     ctx.beginPath();
 
-    ctx.moveTo(x+r,y);
-
-    ctx.lineTo(x+w-r,y);
-
-    ctx.quadraticCurveTo(
-        x+w,y,
-        x+w,y+r
+    ctx.moveTo(
+        x+r,
+        y
     );
 
     ctx.lineTo(
-        x+w,y+h-r
+        x+w-r,
+        y
     );
 
     ctx.quadraticCurveTo(
-        x+w,y+h,
-        x+w-r,y+h
+        x+w,
+        y,
+        x+w,
+        y+r
     );
 
     ctx.lineTo(
-        x+r,y+h
+        x+w,
+        y+h-r
     );
 
     ctx.quadraticCurveTo(
-        x,y+h,
-        x,y+h-r
+        x+w,
+        y+h,
+        x+w-r,
+        y+h
     );
 
-    ctx.lineTo(x,y+r);
+    ctx.lineTo(
+        x+r,
+        y+h
+    );
 
     ctx.quadraticCurveTo(
-        x,y,
-        x+r,y
+        x,
+        y+h,
+        x,
+        y+h-r
+    );
+
+    ctx.lineTo(
+        x,
+        y+r
+    );
+
+    ctx.quadraticCurveTo(
+        x,
+        y,
+        x+r,
+        y
     );
 
     ctx.closePath();
+
     ctx.fill();
+
 }
 
 
-/* =========================
-   HEAD
-========================= */
+/* ==========================================
+   SNAKE HEAD
+========================================== */
 
-function drawHead(x,y,s){
+function drawHead(
+    x,
+    y,
+    size
+){
 
     ctx.save();
 
+
+    ctx.translate(
+        x + size/2,
+        y + size/2
+    );
+
+
+    let angle = 0;
+
+
+    if(direction.x === -1)
+        angle = Math.PI;
+
+    if(direction.y === -1)
+        angle = -Math.PI/2;
+
+    if(direction.y === 1)
+        angle = Math.PI/2;
+
+
+    ctx.rotate(angle);
+
+
+    ctx.translate(
+        -size/2,
+        -size/2
+    );
+
+
     /*
-      Face movement direction
+       Black eyes.
     */
 
-    if(direction.x===-1){
+    ctx.fillStyle = "#000";
 
-        ctx.translate(x+s,y);
-        ctx.scale(-1,1);
-
-    }else if(direction.y===-1){
-
-        ctx.translate(x,y+s);
-        ctx.rotate(-Math.PI/2);
-
-    }else if(direction.y===1){
-
-        ctx.translate(x+s,y);
-        ctx.rotate(Math.PI/2);
-
-    }else{
-
-        ctx.translate(x,y);
-    }
-
-
-    /* BLACK EYES */
-
-    ctx.fillStyle="#000";
 
     ctx.beginPath();
 
     ctx.arc(
-        s*.30,
-        s*.32,
-        s*.085,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    ctx.beginPath();
-
-    ctx.arc(
-        s*.70,
-        s*.32,
-        s*.085,
+        size*.30,
+        size*.30,
+        size*.085,
         0,
         Math.PI*2
     );
@@ -1163,178 +1732,87 @@ function drawHead(x,y,s){
     ctx.fill();
 
 
-    /* FACE */
+    ctx.beginPath();
 
-    ctx.strokeStyle="#000";
+    ctx.arc(
+        size*.70,
+        size*.30,
+        size*.085,
+        0,
+        Math.PI*2
+    );
 
-    ctx.lineWidth=
-        Math.max(2,s*.055);
+    ctx.fill();
 
 
-    if(
-        selectedFace==="angry" ||
-        selectedFace==="mad" ||
-        selectedFace==="danger"
-    ){
+    /*
+       Tongue animation.
+    */
 
-        line(
-            s*.14,s*.18,
-            s*.42,s*.29
-        );
+    const showTongue =
+        Math.floor(
+            performance.now()/330
+        ) % 2 === 0;
 
-        line(
-            s*.58,s*.29,
-            s*.86,s*.18
-        );
 
-        line(
-            s*.23,s*.67,
-            s*.77,s*.67
-        );
+    if(showTongue){
 
-    }else if(selectedFace==="sad" ||
-             selectedFace==="cry"){
+        ctx.strokeStyle =
+            "#ff3030";
+
+        ctx.lineWidth = 2;
+
 
         ctx.beginPath();
 
-        ctx.arc(
-            s/2,
-            s*.76,
-            s*.17,
-            Math.PI,
-            Math.PI*2
+        ctx.moveTo(
+            size/2,
+            size*.64
+        );
+
+        ctx.lineTo(
+            size/2,
+            size
         );
 
         ctx.stroke();
 
-    }else if(selectedFace==="happy" ||
-             selectedFace==="laugh"){
 
         ctx.beginPath();
 
-        ctx.arc(
-            s/2,
-            s*.54,
-            s*.19,
-            0,
-            Math.PI
+        ctx.moveTo(
+            size/2,
+            size
+        );
+
+        ctx.lineTo(
+            size*.40,
+            size*.90
+        );
+
+        ctx.moveTo(
+            size/2,
+            size
+        );
+
+        ctx.lineTo(
+            size*.60,
+            size*.90
         );
 
         ctx.stroke();
 
-    }else if(selectedFace==="scared"){
-
-        ctx.beginPath();
-
-        ctx.arc(
-            s/2,
-            s*.65,
-            s*.11,
-            0,
-            Math.PI*2
-        );
-
-        ctx.stroke();
-
-    }else if(selectedFace==="sleep"){
-
-        line(
-            s*.20,s*.65,
-            s*.43,s*.65
-        );
-
-        line(
-            s*.57,s*.65,
-            s*.80,s*.65
-        );
-
-    }else{
-
-        line(
-            s*.32,s*.65,
-            s*.68,s*.65
-        );
     }
 
-
-    /* TONGUE */
-
-    if(tongue){
-
-        ctx.strokeStyle="#ff3030";
-        ctx.lineWidth=Math.max(2,s*.05);
-
-        line(
-            s*.5,s*.66,
-            s*.5,s*.98
-        );
-
-        line(
-            s*.5,s*.98,
-            s*.40,s
-        );
-
-        line(
-            s*.5,s*.98,
-            s*.60,s
-        );
-    }
 
     ctx.restore();
+
 }
 
 
-function line(x1,y1,x2,y2){
-
-    ctx.beginPath();
-
-    ctx.moveTo(x1,y1);
-    ctx.lineTo(x2,y2);
-
-    ctx.stroke();
-}
-
-
-/* =========================
-   TONGUE
-========================= */
-
-function tongueAnimation(time){
-
-    if(time-tongueTimer>330){
-
-        tongue=!tongue;
-        tongueTimer=time;
-    }
-}
-
-
-/* =========================
-   PAUSE
-========================= */
-
-function togglePause(){
-
-    if(!running)return;
-
-    paused=!paused;
-
-    document.getElementById("pauseButton")
-        .textContent=
-        paused?"▶️ Resume":"⏸️ Pause";
-}
-
-document.getElementById("pauseButton")
-    .onclick=()=>{
-
-        audioStart();
-        togglePause();
-    };
-
-
-/* =========================
-   MODAL HELPERS
-========================= */
+/* ==========================================
+   MODALS
+========================================== */
 
 function openModal(id){
 
@@ -1342,7 +1820,9 @@ function openModal(id){
         .getElementById(id)
         .classList
         .add("show");
+
 }
+
 
 function closeModal(id){
 
@@ -1350,201 +1830,356 @@ function closeModal(id){
         .getElementById(id)
         .classList
         .remove("show");
+
 }
 
 
-document.querySelectorAll("[data-close]")
-.forEach(btn=>{
+document
+    .querySelectorAll("[data-close]")
+    .forEach(
+        button => {
 
-    btn.onclick=()=>{
+            button.onclick =
+            function(){
 
-        closeModal(
-            btn.dataset.close
+                closeModal(
+                    button.dataset.close
+                );
+
+            };
+
+        }
+    );
+
+
+/* ==========================================
+   FRUIT BUTTON
+========================================== */
+
+document.getElementById(
+    "fruitButton"
+).onclick = function(){
+
+    startAudio();
+
+    openModal(
+        "fruitModal"
+    );
+
+};
+
+
+document
+    .querySelectorAll("[data-fruit]")
+    .forEach(
+        button => {
+
+            button.onclick =
+            function(){
+
+                selectedFruit =
+                    button.dataset.fruit;
+
+
+                document
+                    .querySelectorAll(
+                        "[data-fruit]"
+                    )
+                    .forEach(
+                        b =>
+                            b.classList
+                             .remove("selected")
+                    );
+
+
+                button.classList.add(
+                    "selected"
+                );
+
+
+                closeModal(
+                    "fruitModal"
+                );
+
+
+                tone(
+                    700,
+                    .09,
+                    "triangle",
+                    .10
+                );
+
+            };
+
+        }
+    );
+
+
+/* ==========================================
+   FACE BUTTON
+========================================== */
+
+document.getElementById(
+    "faceButton"
+).onclick = function(){
+
+    openModal(
+        "faceModal"
+    );
+
+};
+
+
+document
+    .querySelectorAll("[data-face]")
+    .forEach(
+        button => {
+
+            button.onclick =
+            function(){
+
+                selectedFace =
+                    button.dataset.face;
+
+
+                document
+                    .querySelectorAll(
+                        "[data-face]"
+                    )
+                    .forEach(
+                        b =>
+                            b.classList
+                             .remove("selected")
+                    );
+
+
+                button.classList.add(
+                    "selected"
+                );
+
+
+                closeModal(
+                    "faceModal"
+                );
+
+
+                tone(
+                    600,
+                    .08,
+                    "triangle",
+                    .10
+                );
+
+            };
+
+        }
+    );
+
+
+/* ==========================================
+   SOUND ON/OFF
+========================================== */
+
+document.getElementById(
+    "soundButton"
+).onclick = function(){
+
+    soundEnabled =
+        !soundEnabled;
+
+
+    this.textContent =
+        soundEnabled
+        ? "🔊 Sound ON"
+        : "🔇 Sound OFF";
+
+
+    if(soundEnabled){
+
+        startAudio();
+
+        tone(
+            700,
+            .10,
+            "triangle",
+            .12
         );
-    };
-});
+
+    }
+
+};
 
 
-/* =========================
-   FRUIT MENU
-========================= */
+/* ==========================================
+   GIFT SHOP
+========================================== */
 
-document.getElementById("fruitButton")
-    .onclick=()=>{
+document.getElementById(
+    "giftButton"
+).onclick = function(){
 
-        audioStart();
-        openModal("fruitModal");
-    };
+    updateUI();
 
+    openModal(
+        "giftModal"
+    );
 
-document.querySelectorAll("[data-fruit]")
-.forEach(btn=>{
-
-    btn.onclick=()=>{
-
-        selectedFruit=
-            btn.dataset.fruit;
-
-        createFruit();
-
-        document
-            .querySelectorAll("[data-fruit]")
-            .forEach(
-                b=>b.classList.remove("selected")
-            );
-
-        btn.classList.add("selected");
-
-        closeModal("fruitModal");
-
-        sound(700,.08);
-    };
-});
+};
 
 
-/* =========================
-   FACE MENU
-========================= */
+document
+    .querySelectorAll(".buy")
+    .forEach(
+        button => {
 
-document.getElementById("faceButton")
-    .onclick=()=>{
+            button.onclick =
+            function(){
 
-        openModal("faceModal");
-    };
-
-
-document.querySelectorAll("[data-face]")
-.forEach(btn=>{
-
-    btn.onclick=()=>{
-
-        selectedFace=
-            btn.dataset.face;
-
-        document
-            .querySelectorAll("[data-face]")
-            .forEach(
-                b=>b.classList.remove("selected")
-            );
-
-        btn.classList.add("selected");
-
-        closeModal("faceModal");
-    };
-});
+                const cost =
+                    Number(
+                        button.dataset.cost
+                    );
 
 
-/* =========================
-   SKIN MENU
-========================= */
+                if(coins < cost){
 
-document.getElementById("skinButton")
-    .onclick=()=>{
+                    alert(
+                        "🪙 Coins कम हैं!"
+                    );
 
-        openModal("skinModal");
-    };
+                    return;
 
-
-document.querySelectorAll("[data-skin]")
-.forEach(btn=>{
-
-    btn.onclick=()=>{
-
-        selectedSkin=
-            btn.dataset.skin;
-
-        closeModal("skinModal");
-
-        sound(500,.1);
-    };
-});
+                }
 
 
-/* =========================
-   GIFT
-========================= */
+                /*
+                   खरीदने पर coins कम होंगे
+                   और तुरंत save होंगे.
+                */
 
-function showGift(){
+                coins -= cost;
 
-    const rewards=[
+                saveCoins();
 
-        "🎭 नया Face Unlock!",
-        "🐍 नया Skin Unlock!",
-        "🪙 +100 Coins!",
-        "🛡️ Shield Power!",
-        "👑 Golden Crown!"
+                updateUI();
+
+                playCoinSound();
+
+
+                alert(
+                    "🎁 Gift Unlocked!"
+                );
+
+            };
+
+        }
+    );
+
+
+/* ==========================================
+   100 FRUIT SPECIAL GIFT
+========================================== */
+
+function showSpecialGift(){
+
+    const rewards = [
+
+        "👑 Golden Crown मिला!",
+
+        "⚡ Special Speed Trail मिला!",
+
+        "💎 Diamond Reward मिला!",
+
+        "🛡️ Shield Reward मिला!",
+
+        "🎭 Special Face मिला!"
 
     ];
 
-    const reward=
+
+    const reward =
         rewards[
             Math.floor(
-                Math.random()*rewards.length
+                Math.random() *
+                rewards.length
             )
         ];
 
-    document.getElementById("rewardText")
-        .innerHTML=
+
+    document.getElementById(
+        "rewardText"
+    ).innerHTML =
         `<b>${reward}</b><br><br>
-         100 Fruits पूरे करने पर
-         यह special gift मिला!`;
+        100 Fruits पूरे करने पर
+        Special Gift मिला!`;
 
-    openModal("giftModal");
 
-    giftSound();
+    openModal(
+        "rewardModal"
+    );
+
+
+    playGiftSound();
+
 }
 
 
-/* =========================
+/* ==========================================
    PLAY AGAIN
-========================= */
+========================================== */
 
-document.getElementById("again")
-    .onclick=()=>{
+document.getElementById(
+    "playAgain"
+).onclick = function(){
 
-        audioStart();
-        startGame();
-    };
+    startGame();
+
+};
 
 
-/* =========================
+/* ==========================================
+   INIT
+========================================== */
+
+resize();
+
+startGame();
+
+updateUI();
+
+
+/* ==========================================
    GAME LOOP
-========================= */
+========================================== */
 
-function loop(time){
-
-    tongueAnimation(time);
-
-    /*
-      Fixed speed.
-      कभी तेज नहीं होगी।
-    */
+function gameLoop(time){
 
     if(
         running &&
         !paused &&
-        time-lastTime>=SPEED
+        time - lastTime >= SPEED
     ){
 
         update();
 
-        lastTime=time;
+        lastTime = time;
+
     }
+
 
     draw();
 
-    requestAnimationFrame(loop);
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
 }
 
 
-/* =========================
-   INIT
-========================= */
-
-resize();
-startGame();
-
-requestAnimationFrame(loop);
+requestAnimationFrame(
+    gameLoop
+);
 
 </script>
 
